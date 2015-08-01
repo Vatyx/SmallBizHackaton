@@ -1,4 +1,4 @@
-package angelhack.easytime;
+package com.trinew.easytime;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package angelhack.easytime;
+package com.trinew.easytime;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
