@@ -7,30 +7,23 @@ import android.util.Log;
  */
 public class EasyTimer extends BaseTimer {
 
-    private ShowerTimerListener showerTimerListener;
-
-    private long endTime;
+    private EasyTimerListener easyTimerListener;
 
     // cached time used to bump end time to compensate for pauses
     private long pauseTime;
 
-    public void setShowerTimerListener(ShowerTimerListener listener) {
-        showerTimerListener = listener;
+    public void setEasyTimerListener(EasyTimerListener listener) {
+        easyTimerListener = listener;
     }
 
     // event overrides
 
     @Override
     public void onUpdate(long currTime) {
-        if(showerTimerListener != null) {
+        if(easyTimerListener != null) {
             // update with remaining time converted to seconds
-            Log.i("MainActivity", currTime + " / " + endTime);
-            showerTimerListener.onUpdate((int)((endTime - currTime) / 1000));
-
-            if(currTime >= endTime) {
-                showerTimerListener.onFinished();
-                stopTimer();
-            }
+            Log.i("MainActivity", currTime + "");
+            easyTimerListener.onUpdate((int) (currTime / 1000));
         }
     }
 
@@ -39,30 +32,21 @@ public class EasyTimer extends BaseTimer {
     @Override
     public void pauseTimer() {
         super.pauseTimer();
+    }
 
-        pauseTime = System.currentTimeMillis();
+    @Override
+    public void stopTimer() {
+
     }
 
     @Override
     public void resumeTimer() {
         super.resumeTimer();
-
-        long pauseTimeDiff = System.currentTimeMillis() - pauseTime;
-        endTime += pauseTimeDiff;
     }
 
     // interaction
 
-    public void setEndTime(long newTime) {
-        endTime = newTime;
-    }
-
-    public void setRemainingTime(int remainingTimeSeconds) {
-        long remainingTime = remainingTimeSeconds * 1000;
-        setEndTime(remainingTime);
-    }
-
-    public interface ShowerTimerListener {
+    public interface EasyTimerListener {
         void onUpdate(int remainingTime);
         void onFinished();
     }
