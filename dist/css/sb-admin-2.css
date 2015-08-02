@@ -352,3 +352,24 @@ table.dataTable thead .sorting:after {
 .panel-yellow a:hover {
     color: #df8a13;
 }
+
+.mod-ul {
+    height:825px; 
+    width:15%;
+    overflow:hidden; 
+    overflow-y:scroll;
+}
+
+.no-border {
+    border-color: white;
+}
+
+#stampTable {
+    border: solid;
+    font-size: 18px;
+    text-align: center;
+}
+
+.thead-font {
+    font-size: 24px;
+}
