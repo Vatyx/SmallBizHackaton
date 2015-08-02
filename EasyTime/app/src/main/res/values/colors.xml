@@ -24,10 +24,11 @@
     <color name="dark_gray">#ffb3b3b3</color>
     <color name="very_dark_gray">#636363</color>
     <color name="light_gray">#909090</color>
+    <color name="very_light_gray">#ddd</color>
 
     <!--General-->
     <color name="window_background">#fff</color>
-    <color name="primary">#42b6B3</color>
+    <color name="primary">#00acc7</color>
 
     <!--Text-->
     <color name="primary_text">#fff</color>

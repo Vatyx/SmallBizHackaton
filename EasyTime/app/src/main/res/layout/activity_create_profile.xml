@@ -1,0 +1,170 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:id="@+id/logoContainer"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="32dp"
+        android:paddingBottom="24dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/logoImage"
+            android:src="@mipmap/drawable_logo" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/createProfileContainer"
+        android:layout_below="@+id/logoContainer"
+        android:paddingLeft="90dp"
+        android:paddingRight="90dp"
+        android:paddingBottom="8dp"
+        android:layout_marginTop="24dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:id="@+id/legalNameContainer">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/legalNameText"
+                android:textColor="@color/very_dark_gray"
+                android:textSize="12sp"
+                android:text="Legal Name"
+                android:layout_marginLeft="8dp" />
+
+            <EditText
+                android:id="@+id/legalNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:textSize="16sp"
+                android:inputType="textCapWords"
+                android:background="@drawable/inputbox"
+                android:layout_below="@+id/legalNameText"
+                android:layout_marginTop="2dp"
+                android:paddingLeft="12dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:id="@+id/usernameContainer">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/usernameText"
+                android:textColor="@color/very_dark_gray"
+                android:textSize="12sp"
+                android:text="Username"
+                android:layout_marginLeft="8dp" />
+
+            <EditText
+                android:id="@+id/usernameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="2dp"
+                android:inputType="text"
+                android:textSize="16sp"
+                android:textColor="@color/edit_text"
+                android:background="@drawable/inputbox"
+                android:layout_below="@+id/usernameText"
+                android:paddingLeft="12dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:id="@+id/passwordContainer">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/passwordText"
+                android:textColor="@color/very_dark_gray"
+                android:textSize="12sp"
+                android:text="Password"
+                android:layout_marginLeft="8dp" />
+
+            <EditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="2dp"
+                android:inputType="textPassword"
+                android:textSize="16sp"
+                android:textColor="@color/edit_text"
+                android:background="@drawable/inputbox"
+                android:layout_below="@+id/passwordText"
+                android:paddingLeft="12dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:id="@+id/passwordConfirmContainer">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/passwordConfirmText"
+                android:textColor="@color/very_dark_gray"
+                android:textSize="12sp"
+                android:text="Confirm Password"
+                android:layout_marginLeft="8dp" />
+
+            <EditText
+                android:id="@+id/passwordConfirmEditText"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="2dp"
+                android:inputType="textPassword"
+                android:textSize="16sp"
+                android:textColor="@color/edit_text"
+                android:background="@drawable/inputbox"
+                android:layout_below="@+id/passwordConfirmText"
+                android:paddingLeft="12dp" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:id="@+id/buttonContainer"
+        android:paddingLeft="118dp"
+        android:paddingRight="118dp"
+        android:layout_alignParentBottom="false"
+        android:layout_below="@+id/createProfileContainer"
+        android:layout_marginTop="24dp">
+
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_centerHorizontal="true"
+            android:text="Submit"
+            android:background="@mipmap/drawable_login"
+            android:textSize="16sp"
+            android:textColor="#fff" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -6,4 +6,11 @@
 
     <string name="action_settings">Settings</string>
 
+    <!--Login-->
+    <string name="login_label_username">Username</string>
+    <string name="login_label_password">Password</string>
+
+    <!--Misc-->
+    <string name="content_missing_description">Oops!</string>
+
 </resources>
