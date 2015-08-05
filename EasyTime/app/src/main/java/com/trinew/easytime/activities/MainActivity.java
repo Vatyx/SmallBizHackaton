@@ -23,7 +23,6 @@ import com.trinew.easytime.modules.location.LocationHandler;
 import com.trinew.easytime.modules.time.EasyTimer;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -144,12 +143,13 @@ public class MainActivity extends ActionBarActivity {
     // interaction
 
     private void checkOut() {
-        checkState = CHECK_STATE_OUT;
         checkInButton.setEnabled(false);
 
         if (easyTimer.isRunning()) {
-            easyTimer.stopTimer();
+            easyTimer.pauseTimer();
         }
+
+        timerColonTextView.clearAnimation();
 
         // begin animations
         final Animation a = new RotateAnimation(0.0f, 360.0f,
@@ -157,23 +157,47 @@ public class MainActivity extends ActionBarActivity {
                 0.5f);
         a.setRepeatCount(-1);
         a.setDuration(1000);
-        checkInButton.startAnimation(a);
+        a.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
 
-        timerColonTextView.clearAnimation();
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                if (checkState == CHECK_STATE_OUT) {
+                    checkInButton.clearAnimation();
+                    checkInButton.setBackgroundResource(R.drawable.check_in_button_selector);
+                    checkInButton.setEnabled(true);
+
+                    Toast.makeText(MainActivity.this, "Thanks for checking out!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        checkInButton.startAnimation(a);
 
         final ParseUser user = ParseUser.getCurrentUser();
 
+        // clone the list of stamps from the user
+        final List<ParseStamp> parseStamps = user.getList("stamps");
+
+        // init the stamp
         final ParseStamp stamp = new ParseStamp();
         stamp.setFlag(ParseStamp.FLAG_CHECK_OUT);
         stamp.setComment("Checked out!");
 
+        // now we need a location for the stamp
+        // first try to get a quick fix location, if that doesn't work
+        // then request a location
         ParseGeoPoint quickLocation = LocationHandler.getQuickLocation(getApplicationContext());
         if(quickLocation != null) {
             stamp.setLocation(quickLocation);
-
-            List<ParseStamp> parseStamps = user.getList("stamps");
-            if(parseStamps == null)
-                parseStamps = new ArrayList<ParseStamp>();
 
             parseStamps.add(stamp);
             user.put("stamps", parseStamps);
@@ -186,45 +210,35 @@ public class MainActivity extends ActionBarActivity {
                         return;
                     }
 
-                    Toast.makeText(MainActivity.this, "Thanks for checking out!", Toast.LENGTH_LONG).show();
+                    Log.i("MainActivity", "Saved stamp!!");
 
-                    checkInButton.clearAnimation();
-                    checkInButton.setBackgroundResource(R.drawable.check_in_button_selector);
-                    checkInButton.setEnabled(true);
+                    checkState = CHECK_STATE_OUT;
                 }
             });
         } else {
             LocationHandler.requestLocation(getApplicationContext(), new LocationHandler.OnLocationReceivedListener() {
                 @Override
                 public void done(ParseGeoPoint geoPoint, Exception e) {
-                    if (e == null && geoPoint != null) {
-                        stamp.setLocation(geoPoint);
-
-                        List<ParseStamp> parseStamps = user.getList("stamps");
-                        if (parseStamps == null)
-                            parseStamps = new ArrayList<ParseStamp>();
-
-                        parseStamps.add(stamp);
-                        user.put("stamps", parseStamps);
-
-                        user.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e != null) {
-                                    Toast.makeText(MainActivity.this, "There was a problem checking out, please try again.", Toast.LENGTH_LONG).show();
-                                    return;
-                                }
-
-                                Toast.makeText(MainActivity.this, "Thanks for checking out!", Toast.LENGTH_LONG).show();
-
-                                checkInButton.clearAnimation();
-                                checkInButton.setBackgroundResource(R.drawable.check_in_button_selector);
-                                checkInButton.setEnabled(true);
-                            }
-                        });
-                    } else {
+                    if (e != null || geoPoint == null) {
                         Toast.makeText(MainActivity.this, "There was a problem checking out, please try again.", Toast.LENGTH_LONG).show();
                     }
+
+                    stamp.setLocation(geoPoint);
+
+                    parseStamps.add(stamp);
+                    user.put("stamps", parseStamps);
+
+                    user.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null) {
+                                Toast.makeText(MainActivity.this, "There was a problem checking out, please try again.", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            checkState = CHECK_STATE_OUT;
+                        }
+                    });
                 }
             });
         }
@@ -238,6 +252,39 @@ public class MainActivity extends ActionBarActivity {
                 0.5f);
         a.setRepeatCount(-1);
         a.setDuration(1000);
+        a.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                if(checkState == CHECK_STATE_IN) {
+                    if (!easyTimer.isRunning()) {
+                        easyTimer.startTimer();
+                    }
+                    Animation anim = new AlphaAnimation(0.0f, 1.0f);
+                    anim.setDuration(500); //You can manage the blinking time with this parameter
+                    anim.setStartOffset(20);
+                    anim.setRepeatMode(Animation.REVERSE);
+                    anim.setRepeatCount(Animation.INFINITE);
+                    timerColonTextView.startAnimation(anim);
+
+                    checkInButton.clearAnimation();
+                    checkInButton.setBackgroundResource(R.drawable.check_out_button_selector);
+                    checkInButton.setEnabled(true);
+
+                    Toast.makeText(MainActivity.this, "Nice! You checked in!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         checkInButton.startAnimation(a);
 
         final ParseUser user = ParseUser.getCurrentUser();
@@ -250,8 +297,6 @@ public class MainActivity extends ActionBarActivity {
             stamp.setLocation(quickLocation);
 
             List<ParseStamp> parseStamps = user.getList("stamps");
-            if(parseStamps == null)
-                parseStamps = new ArrayList<ParseStamp>();
 
             parseStamps.add(stamp);
             user.put("stamps", parseStamps);
@@ -263,25 +308,8 @@ public class MainActivity extends ActionBarActivity {
                         Toast.makeText(MainActivity.this, "There was a problem checking in, please try again.", Toast.LENGTH_LONG).show();
                         return;
                     }
-
-                    Toast.makeText(MainActivity.this, "Nice! You checked in!", Toast.LENGTH_LONG).show();
-
+                    Log.i("MainActivity", "Saved stamp!!");
                     checkState = CHECK_STATE_IN;
-
-                    if (!easyTimer.isRunning()) {
-                        easyTimer.startTimer();
-                    }
-
-                    Animation anim = new AlphaAnimation(0.0f, 1.0f);
-                    anim.setDuration(500); //You can manage the blinking time with this parameter
-                    anim.setStartOffset(20);
-                    anim.setRepeatMode(Animation.REVERSE);
-                    anim.setRepeatCount(Animation.INFINITE);
-                    timerColonTextView.startAnimation(anim);
-
-                    checkInButton.clearAnimation();
-                    checkInButton.setBackgroundResource(R.drawable.check_out_button_selector);
-                    checkInButton.setEnabled(true);
                 }
             });
         } else {
@@ -292,8 +320,6 @@ public class MainActivity extends ActionBarActivity {
                         stamp.setLocation(geoPoint);
 
                         List<ParseStamp> parseStamps = user.getList("stamps");
-                        if (parseStamps == null)
-                            parseStamps = new ArrayList<ParseStamp>();
 
                         parseStamps.add(stamp);
                         user.put("stamps", parseStamps);
@@ -306,24 +332,7 @@ public class MainActivity extends ActionBarActivity {
                                     return;
                                 }
 
-                                Toast.makeText(MainActivity.this, "Nice! You checked in!", Toast.LENGTH_LONG).show();
-
                                 checkState = CHECK_STATE_IN;
-
-                                if (!easyTimer.isRunning()) {
-                                    easyTimer.startTimer();
-                                }
-
-                                Animation anim = new AlphaAnimation(0.0f, 1.0f);
-                                anim.setDuration(500); //You can manage the blinking time with this parameter
-                                anim.setStartOffset(20);
-                                anim.setRepeatMode(Animation.REVERSE);
-                                anim.setRepeatCount(Animation.INFINITE);
-                                timerColonTextView.startAnimation(anim);
-
-                                checkInButton.clearAnimation();
-                                checkInButton.setBackgroundResource(R.drawable.check_out_button_selector);
-                                checkInButton.setEnabled(true);
                             }
                         });
                     } else {
@@ -332,5 +341,9 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
         }
+    }
+
+    private interface StampListener {
+        void done(Exception error);
     }
 }
