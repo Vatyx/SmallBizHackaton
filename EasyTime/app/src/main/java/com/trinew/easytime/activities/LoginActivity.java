@@ -111,7 +111,5 @@ public class LoginActivity extends Activity {
     private void onCreateAccount() {
         final Intent intent = new Intent(getApplicationContext(), EmployerTokenVerificationActivity.class);
         startActivity(intent);
-
-        finish();
     }
 }

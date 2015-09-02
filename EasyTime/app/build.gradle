@@ -25,6 +25,7 @@ repositories {
     jcenter()
     mavenCentral()
     mavenLocal()
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -36,4 +37,6 @@ dependencies {
 
     compile 'com.parse.bolts:bolts-android:1.+'
     compile fileTree(dir: 'libs', include: 'Parse-*.jar')
+
+    compile 'com.github.PhilJay:MPAndroidChart:v2.1.3'
 }
