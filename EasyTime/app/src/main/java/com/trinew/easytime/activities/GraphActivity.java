@@ -5,6 +5,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -13,16 +16,17 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
-import com.parse.GetCallback;
+import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.trinew.easytime.R;
 import com.trinew.easytime.models.ParseStamp;
 import com.trinew.easytime.modules.ProfileBuilder;
+import com.trinew.easytime.modules.stamps.StampCollection;
+import com.trinew.easytime.modules.stamps.StampCollectionBox;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -44,6 +48,11 @@ public class GraphActivity extends ActionBarActivity implements OnChartValueSele
             "Party Q", "Party R", "Party S", "Party T", "Party U", "Party V", "Party W", "Party X",
             "Party Y", "Party Z"
     };
+
+    private RelativeLayout progressContainer;
+    private RelativeLayout errorContainer;
+    private TextView genericErrorText;
+    private TextView noStampsErrorText;
 
     private LineChart mChart;
 
@@ -67,6 +76,12 @@ public class GraphActivity extends ActionBarActivity implements OnChartValueSele
         actionBar.setHomeButtonEnabled(true);
         actionBar.setHomeButtonEnabled(false);
         //actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+
+        // init views
+        progressContainer = (RelativeLayout) findViewById(R.id.progressContainer);
+        errorContainer = (RelativeLayout) findViewById(R.id.errorContainer);
+        genericErrorText = (TextView) findViewById(R.id.genericErrorText);
+        noStampsErrorText = (TextView) findViewById(R.id.noStampsErrorText);
 
         // init charts
 
@@ -93,6 +108,9 @@ public class GraphActivity extends ActionBarActivity implements OnChartValueSele
 
         Legend l = mChart.getLegend();
         l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+
+        // begin charting data
+        chartUserData();
     }
 
     @Override
@@ -120,39 +138,85 @@ public class GraphActivity extends ActionBarActivity implements OnChartValueSele
         ParseUser currentUser = ParseUser.getCurrentUser();
         List<ParseStamp> stamps = currentUser.getList(ProfileBuilder.PROFILE_KEY_STAMPS);
 
-        ArrayList<String> xVals = new ArrayList<String>();
-        for (int i = 0; i < mSeekBarX.getProgress(); i++) {
-            xVals.add((i) + "");
+        // check for valid data
+        if(stamps == null) {
+            errorContainer.setVisibility(View.VISIBLE);
+            genericErrorText.setVisibility(View.VISIBLE);
+            return;
         }
 
-        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        // check if there are any stamps
+        if(stamps.size() == 0) {
+            errorContainer.setVisibility(View.VISIBLE);
+            noStampsErrorText.setVisibility(View.VISIBLE);
 
-        for (int z = 0; z < 3; z++) {
+            return;
+        }
 
-            ArrayList<Entry> values = new ArrayList<Entry>();
+        progressContainer.setVisibility(View.VISIBLE);
 
-            for (int i = 0; i < mSeekBarX.getProgress(); i++) {
-                double val = (Math.random() * mSeekBarY.getProgress()) + 3;
-                values.add(new Entry((float) val, i));
+        // fetch the stamps and fill our charts
+        ParseStamp.fetchAllIfNeededInBackground(stamps, new FindCallback<ParseStamp>() {
+            @Override
+            public void done(List<ParseStamp> stampList, ParseException e) {
+                progressContainer.setVisibility(View.GONE);
+
+                if (e != null || stampList == null) {
+                    errorContainer.setVisibility(View.VISIBLE);
+                    genericErrorText.setVisibility(View.VISIBLE);
+
+                    return;
+                }
+
+                StampCollectionBox stampCollectionBox = new StampCollectionBox(stampList);
+
+                int minHour = stampCollectionBox.getMinHour();
+                int maxHour = stampCollectionBox.getMaxHour();
+                int midHour = (minHour + maxHour) / 2;
+                List<String> xVals = new ArrayList<>();
+                for(int z = 0; z < maxHour - minHour; z++) {
+                    xVals.add((minHour + z) + "");
+                }
+
+                int color = getResources().getColor(R.color.primary);
+
+                // stamps are arranged in collections based on the day they were created
+                // this is implemented using the StampCollectionBox model
+                // the box contains a list of StampCollection,
+                // each StampCollection contains a list of stamps and the day that the collection
+                // is associated with
+                List<StampCollection> stampCollections = stampCollectionBox.getStampCollections();
+                List<LineDataSet> dataSets = new ArrayList<>();
+
+                int j = 0;
+                for (int i = 0; i < stampCollections.size(); i++) {
+                    StampCollection stampCollection = stampCollections.get(i);
+                    int stampDay = stampCollection.getCollectionDay();
+                    List<ParseStamp> collectionStamps = stampCollection.getStamps();
+                    List<Entry> valueEntries = new ArrayList<>();
+
+                    for(j = 0; j < collectionStamps.size(); i++) {
+                        Calendar stampCalendar = Calendar.getInstance();
+                        stampCalendar.setTime(collectionStamps.get(j).getCreatedAt());
+                        int stampHour = stampCalendar.get(Calendar.HOUR_OF_DAY);
+                        int adjustedTimeIndex = (int) ((float) stampHour / 24f * (maxHour - minHour) + minHour);
+                        valueEntries.add(new Entry((float) stampDay, adjustedTimeIndex));
+                    }
+
+                    LineDataSet d = new LineDataSet(valueEntries, "DataSet " + (i + 1));
+                    d.setLineWidth(2.5f);
+                    d.setCircleSize(4f);
+
+                    d.setColor(color);
+                    d.setCircleColor(color);
+                    dataSets.add(d);
+                }
+
+                LineData data = new LineData(xVals, dataSets);
+
+                mChart.setData(data);
+                mChart.invalidate();
             }
-
-            LineDataSet d = new LineDataSet(values, "DataSet " + (z + 1));
-            d.setLineWidth(2.5f);
-            d.setCircleSize(4f);
-
-            int color = mColors[z % mColors.length];
-            d.setColor(color);
-            d.setCircleColor(color);
-            dataSets.add(d);
-        }
-
-        // make the first DataSet dashed
-        dataSets.get(0).enableDashedLine(10, 10, 0);
-        dataSets.get(0).setColors(ColorTemplate.VORDIPLOM_COLORS);
-        dataSets.get(0).setCircleColors(ColorTemplate.VORDIPLOM_COLORS);
-
-        LineData data = new LineData(xVals, dataSets);
-        mChart.setData(data);
-        mChart.invalidate();
+        });
     }
 }

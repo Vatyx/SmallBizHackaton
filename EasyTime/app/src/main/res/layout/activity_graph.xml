@@ -53,10 +53,56 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/graphChart"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:id="@+id/chartContainer">
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/graphChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/errorContainer"
+            android:background="#fff">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/noStampsErrorText"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                android:text="You don&apos;t have any stamps!" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/genericErrorText"
+                android:layout_centerInParent="true"
+                android:text="There was a problem loading your stamps!"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/progressContainer"
+            android:background="#fff"
+            android:visibility="gone">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/chartProgress"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>
