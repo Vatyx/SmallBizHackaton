@@ -1,13 +1,11 @@
 package com.trinew.easytime.views.charts;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.github.mikephil.charting.animation.ChartAnimator;
-import com.github.mikephil.charting.buffer.BarBuffer;
-import com.github.mikephil.charting.buffer.HorizontalBarBuffer;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.renderer.DataRenderer;
 import com.github.mikephil.charting.utils.Transformer;
 import com.github.mikephil.charting.utils.Utils;
@@ -38,6 +36,17 @@ public class EasyChartRenderer extends DataRenderer {
     public EasyChartRenderer(EasyDataProvider chart, ChartAnimator animator,
                                       ViewPortHandler viewPortHandler) {
         super(animator, viewPortHandler);
+
+        this.mChart = chart;
+
+        mHighlightPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mHighlightPaint.setStyle(Paint.Style.FILL);
+        mHighlightPaint.setColor(Color.rgb(0, 0, 0));
+        // set alpha after color
+        mHighlightPaint.setAlpha(120);
+
+        mShadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mShadowPaint.setStyle(Paint.Style.FILL);
 
         mValuePaint.setTextAlign(Paint.Align.LEFT);
     }
