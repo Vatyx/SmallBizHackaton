@@ -59,7 +59,7 @@
         android:layout_weight="1"
         android:id="@+id/chartContainer">
 
-        <com.github.mikephil.charting.charts.LineChart
+        <com.trinew.easytime.views.EasyHorizontalLineChart
             android:id="@+id/graphChart"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -69,7 +69,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/errorContainer"
-            android:background="#fff">
+            android:background="#fff"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"

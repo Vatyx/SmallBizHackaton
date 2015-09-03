@@ -1,5 +1,6 @@
 package com.trinew.easytime.activities;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -9,11 +10,13 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.parse.FindCallback;
@@ -22,11 +25,15 @@ import com.parse.ParseUser;
 import com.trinew.easytime.R;
 import com.trinew.easytime.models.ParseStamp;
 import com.trinew.easytime.modules.ProfileBuilder;
+import com.trinew.easytime.modules.data.StampsEntry;
 import com.trinew.easytime.modules.stamps.StampCollection;
 import com.trinew.easytime.modules.stamps.StampCollectionBox;
+import com.trinew.easytime.views.EasyHorizontalLineChart;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -38,27 +45,15 @@ import java.util.List;
  */
 public class GraphActivity extends ActionBarActivity implements OnChartValueSelectedListener {
 
-    protected String[] mMonths = new String[] {
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"
-    };
-
-    protected String[] mParties = new String[] {
-            "Party A", "Party B", "Party C", "Party D", "Party E", "Party F", "Party G", "Party H",
-            "Party I", "Party J", "Party K", "Party L", "Party M", "Party N", "Party O", "Party P",
-            "Party Q", "Party R", "Party S", "Party T", "Party U", "Party V", "Party W", "Party X",
-            "Party Y", "Party Z"
-    };
-
     private RelativeLayout progressContainer;
     private RelativeLayout errorContainer;
     private TextView genericErrorText;
     private TextView noStampsErrorText;
 
-    private LineChart mChart;
+    private EasyHorizontalLineChart mChart;
 
-    /* (non-Javadoc)
-     * @see com.newsfeeder.custom.CustomActivity#onCreate(android.os.Bundle)
-     */
+    private Typeface tf;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -84,33 +79,60 @@ public class GraphActivity extends ActionBarActivity implements OnChartValueSele
         noStampsErrorText = (TextView) findViewById(R.id.noStampsErrorText);
 
         // init charts
-
-        mChart = (LineChart) findViewById(R.id.graphChart);
+        mChart = (EasyHorizontalLineChart) findViewById(R.id.graphChart);
         mChart.setOnChartValueSelectedListener(this);
+        // mChart.setHighlightEnabled(false);
 
-        mChart.setDrawGridBackground(false);
+        mChart.setDoubleTapToZoomEnabled(false);
+        mChart.setDrawBarShadow(false);
+        mChart.setDrawValueAboveBar(true);
         mChart.setDescription("");
 
-        // mChart.setStartAtZero(true);
+        // if more than 60 entries are displayed in the chart, no values will be
+        // drawn
+        mChart.setMaxVisibleValueCount(366);
 
-        // enable value highlighting
-        mChart.setHighlightEnabled(true);
-
-        // enable touch gestures
-        mChart.setTouchEnabled(true);
-
-        // enable scaling and dragging
-        mChart.setDragEnabled(true);
-        mChart.setScaleEnabled(true);
-
-        // if disabled, scaling can be done on x- and y-axis separately
+        // scaling can now only be done on x- and y-axis separately
         mChart.setPinchZoom(false);
 
-        Legend l = mChart.getLegend();
-        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+        // draw shadows for each bar that show the maximum value
+        // mChart.setDrawBarShadow(true);
 
-        // begin charting data
+        // mChart.setDrawXLabels(false);
+
+        mChart.setDrawGridBackground(false);
+
+        // mChart.setDrawYLabels(false);
+
+        //tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
+
+        XAxis xl = mChart.getXAxis();
+        xl.setPosition(XAxis.XAxisPosition.BOTTOM);
+        //xl.setTypeface(tf);
+        xl.setDrawAxisLine(true);
+        xl.setDrawGridLines(true);
+        xl.setGridLineWidth(0.3f);
+
+        YAxis yl = mChart.getAxisLeft();
+        //yl.setTypeface(tf);
+        yl.setDrawAxisLine(true);
+        yl.setDrawGridLines(true);
+        yl.setGridLineWidth(0.3f);
+//        yl.setInverted(true);
+
+        YAxis yr = mChart.getAxisRight();
+        //yr.setTypeface(tf);
+        yr.setDrawAxisLine(true);
+        yr.setDrawGridLines(false);
+//        yr.setInverted(true);
+
         chartUserData();
+        mChart.animateY(2500);
+
+        Legend l = mChart.getLegend();
+        l.setPosition(Legend.LegendPosition.BELOW_CHART_LEFT);
+        l.setFormSize(0f);
+        l.setXEntrySpace(4f);
     }
 
     @Override
@@ -170,15 +192,7 @@ public class GraphActivity extends ActionBarActivity implements OnChartValueSele
 
                 StampCollectionBox stampCollectionBox = new StampCollectionBox(stampList);
 
-                int minHour = stampCollectionBox.getMinHour();
-                int maxHour = stampCollectionBox.getMaxHour();
-                int midHour = (minHour + maxHour) / 2;
                 List<String> xVals = new ArrayList<>();
-                for(int z = 0; z < maxHour - minHour; z++) {
-                    xVals.add((minHour + z) + "");
-                }
-
-                int color = getResources().getColor(R.color.primary);
 
                 // stamps are arranged in collections based on the day they were created
                 // this is implemented using the StampCollectionBox model
@@ -186,33 +200,32 @@ public class GraphActivity extends ActionBarActivity implements OnChartValueSele
                 // each StampCollection contains a list of stamps and the day that the collection
                 // is associated with
                 List<StampCollection> stampCollections = stampCollectionBox.getStampCollections();
-                List<LineDataSet> dataSets = new ArrayList<>();
+                List<BarDataSet> dataSets = new ArrayList<>();
+                List<StampsEntry> collectionEntries = new ArrayList<>();
 
                 int j = 0;
                 for (int i = 0; i < stampCollections.size(); i++) {
                     StampCollection stampCollection = stampCollections.get(i);
-                    int stampDay = stampCollection.getCollectionDay();
+                    Date stampDate = stampCollection.getCollectionDate();
+
+                    // prepare the xVal
+                    SimpleDateFormat outputDateFormat = new SimpleDateFormat("M/d");
+                    String collectionDateStr = outputDateFormat.format(stampDate);
+                    xVals.add(collectionDateStr);
+
+                    // prepare the yVal array
                     List<ParseStamp> collectionStamps = stampCollection.getStamps();
-                    List<Entry> valueEntries = new ArrayList<>();
-
-                    for(j = 0; j < collectionStamps.size(); i++) {
-                        Calendar stampCalendar = Calendar.getInstance();
-                        stampCalendar.setTime(collectionStamps.get(j).getCreatedAt());
-                        int stampHour = stampCalendar.get(Calendar.HOUR_OF_DAY);
-                        int adjustedTimeIndex = (int) ((float) stampHour / 24f * (maxHour - minHour) + minHour);
-                        valueEntries.add(new Entry((float) stampDay, adjustedTimeIndex));
-                    }
-
-                    LineDataSet d = new LineDataSet(valueEntries, "DataSet " + (i + 1));
-                    d.setLineWidth(2.5f);
-                    d.setCircleSize(4f);
-
-                    d.setColor(color);
-                    d.setCircleColor(color);
-                    dataSets.add(d);
+                    collectionEntries.add(new StampsEntry(collectionStamps, i));
                 }
 
-                LineData data = new LineData(xVals, dataSets);
+                //Log.i("GraphActivity", collectionEntries.size() + ":" + collectionEntries.get(0).getVals().length);
+
+                BarDataSet dataSet = new BarDataSet(collectionEntries, "DataSet");
+                dataSets.add(dataSet);
+
+                BarData data = new BarData(xVals, dataSets);
+                data.setValueTextSize(10f);
+                //data.setValueTypeface(tf);
 
                 mChart.setData(data);
                 mChart.invalidate();
