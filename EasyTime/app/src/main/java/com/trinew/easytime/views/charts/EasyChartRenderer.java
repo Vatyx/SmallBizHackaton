@@ -7,13 +7,13 @@ import android.graphics.RectF;
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.buffer.BarBuffer;
 import com.github.mikephil.charting.buffer.HorizontalBarBuffer;
-import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.renderer.DataRenderer;
 import com.github.mikephil.charting.utils.Transformer;
 import com.github.mikephil.charting.utils.Utils;
 import com.github.mikephil.charting.utils.ValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.trinew.easytime.modules.data.EasyBuffer;
 import com.trinew.easytime.modules.data.EasyData;
 import com.trinew.easytime.modules.data.EasyDataProvider;
 import com.trinew.easytime.modules.data.EasyDataSet;
@@ -31,7 +31,7 @@ public class EasyChartRenderer extends DataRenderer {
     /** the rect object that is used for drawing the bars */
     protected RectF mBarRect = new RectF();
 
-    protected BarBuffer[] mBarBuffers;
+    protected EasyBuffer[] mBarBuffers;
 
     protected Paint mShadowPaint;
 
@@ -46,11 +46,11 @@ public class EasyChartRenderer extends DataRenderer {
     public void initBuffers() {
 
         EasyData easyData = mChart.getEasyData();
-        mBarBuffers = new HorizontalBarBuffer[easyData.getDataSetCount()];
+        mBarBuffers = new EasyBuffer[easyData.getDataSetCount()];
 
         for (int i = 0; i < mBarBuffers.length; i++) {
             EasyDataSet set = easyData.getDataSetByIndex(i);
-            mBarBuffers[i] = new HorizontalBarBuffer(set.getValueCount() * 4 * set.getStackSize(),
+            mBarBuffers[i] = new EasyBuffer(set.getValueCount() * 4 * set.getStackSize(),
                     easyData.getGroupSpace(),
                     easyData.getDataSetCount(), set.isStacked());
         }
@@ -68,7 +68,7 @@ public class EasyChartRenderer extends DataRenderer {
         List<EasyEntry> entries = dataSet.getYVals();
 
         // initialize the buffer
-        BarBuffer buffer = mBarBuffers[index];
+        EasyBuffer buffer = mBarBuffers[index];
         buffer.setPhases(phaseX, phaseY);
         buffer.setBarSpace(dataSet.getBarSpace());
         buffer.setDataSet(index);
@@ -134,21 +134,36 @@ public class EasyChartRenderer extends DataRenderer {
 
                 float[] valuePoints = getTransformedValues(trans, entries, i);
 
-                // if only single values are drawn (sum)
-                if (!dataSet.isStacked()) {
+                for (int j = 0; j < (valuePoints.length - 1) * mAnimator.getPhaseX(); j += 2) {
 
-                    for (int j = 0; j < valuePoints.length * mAnimator.getPhaseX(); j += 2) {
+                    EasyEntry e = entries.get(j / 2);
 
-                        if (!mViewPortHandler.isInBoundsTop(valuePoints[j + 1]))
-                            break;
+                    float[] vals = e.getStampVals();
 
-                        if (!mViewPortHandler.isInBoundsX(valuePoints[j]))
-                            continue;
+                    // we still draw stacked bars, but there is one
+                    // non-stacked
+                    // in between
 
-                        if (!mViewPortHandler.isInBoundsBottom(valuePoints[j + 1]))
-                            continue;
+                    float[] transformed = new float[vals.length * 2];
 
-                        float val = entries.get(j / 2).getVal();
+                    float posY = 0f;
+
+                    for (int k = 0, idx = 0; k < transformed.length; k += 2, idx++) {
+
+                        float value = vals[idx];
+                        float y;
+
+                        posY += value;
+                        y = posY;
+
+                        transformed[k] = y * mAnimator.getPhaseY();
+                    }
+
+                    trans.pointValuesToPixel(transformed);
+
+                    for (int k = 0; k < transformed.length; k += 2) {
+
+                        float val = vals[k / 2];
                         String valueText = formatter.getFormattedValue(val);
 
                         // calculate the correct offset depending on the draw position of the value
@@ -161,113 +176,26 @@ public class EasyChartRenderer extends DataRenderer {
                             negOffset = -negOffset - valueTextWidth;
                         }
 
-                        drawValue(c, valueText, valuePoints[j] + (val >= 0 ? posOffset : negOffset),
-                                valuePoints[j + 1] + halfTextHeight);
-                    }
+                        float x = transformed[k]
+                                + (val >= 0 ? posOffset : negOffset);
+                        float y = valuePoints[j + 1];
 
-                    // if each value of a potential stack should be drawn
-                } else {
+                        if (!mViewPortHandler.isInBoundsTop(y))
+                            break;
 
-                    for (int j = 0; j < (valuePoints.length - 1) * mAnimator.getPhaseX(); j += 2) {
+                        if (!mViewPortHandler.isInBoundsX(x))
+                            continue;
 
-                        BarEntry e = entries.get(j / 2);
+                        if (!mViewPortHandler.isInBoundsBottom(y))
+                            continue;
 
-                        float[] vals = e.getVals();
-
-                        // we still draw stacked bars, but there is one
-                        // non-stacked
-                        // in between
-                        if (vals == null) {
-
-                            if (!mViewPortHandler.isInBoundsTop(valuePoints[j + 1]))
-                                break;
-
-                            if (!mViewPortHandler.isInBoundsX(valuePoints[j]))
-                                continue;
-
-                            if (!mViewPortHandler.isInBoundsBottom(valuePoints[j + 1]))
-                                continue;
-
-                            float val = e.getVal();
-                            String valueText = formatter.getFormattedValue(val);
-
-                            // calculate the correct offset depending on the draw position of the value
-                            float valueTextWidth = Utils.calcTextWidth(mValuePaint, valueText);
-                            posOffset = (drawValueAboveBar ? valueOffsetPlus : -(valueTextWidth + valueOffsetPlus));
-                            negOffset = (drawValueAboveBar ? -(valueTextWidth + valueOffsetPlus) : valueOffsetPlus);
-
-                            if (isInverted) {
-                                posOffset = -posOffset - valueTextWidth;
-                                negOffset = -negOffset - valueTextWidth;
-                            }
-
-                            drawValue(c, valueText, valuePoints[j]
-                                            + (e.getVal() >= 0 ? posOffset : negOffset),
-                                    valuePoints[j + 1] + halfTextHeight);
-
-                        } else {
-
-                            float[] transformed = new float[vals.length * 2];
-
-                            float posY = 0f;
-                            float negY = -e.getNegativeSum();
-
-                            for (int k = 0, idx = 0; k < transformed.length; k += 2, idx++) {
-
-                                float value = vals[idx];
-                                float y;
-
-                                if (value >= 0f) {
-                                    posY += value;
-                                    y = posY;
-                                } else {
-                                    y = negY;
-                                    negY -= value;
-                                }
-
-                                transformed[k] = y * mAnimator.getPhaseY();
-                            }
-
-                            trans.pointValuesToPixel(transformed);
-
-                            for (int k = 0; k < transformed.length; k += 2) {
-
-                                float val = vals[k / 2];
-                                String valueText = formatter.getFormattedValue(val);
-
-                                // calculate the correct offset depending on the draw position of the value
-                                float valueTextWidth = Utils.calcTextWidth(mValuePaint, valueText);
-                                posOffset = (drawValueAboveBar ? valueOffsetPlus : -(valueTextWidth + valueOffsetPlus));
-                                negOffset = (drawValueAboveBar ? -(valueTextWidth + valueOffsetPlus) : valueOffsetPlus);
-
-                                if (isInverted) {
-                                    posOffset = -posOffset - valueTextWidth;
-                                    negOffset = -negOffset - valueTextWidth;
-                                }
-
-                                float x = transformed[k]
-                                        + (val >= 0 ? posOffset : negOffset);
-                                float y = valuePoints[j + 1];
-
-                                if (!mViewPortHandler.isInBoundsTop(y))
-                                    break;
-
-                                if (!mViewPortHandler.isInBoundsX(x))
-                                    continue;
-
-                                if (!mViewPortHandler.isInBoundsBottom(y))
-                                    continue;
-
-                                drawValue(c, valueText, x, y + halfTextHeight);
-                            }
-                        }
+                        drawValue(c, valueText, x, y + halfTextHeight);
                     }
                 }
             }
         }
     }
 
-    @Override
     protected void prepareBarHighlight(float x, float y1, float y2, float barspaceHalf,
                                        Transformer trans) {
 
@@ -288,9 +216,8 @@ public class EasyChartRenderer extends DataRenderer {
                 mChart.getEasyData(), mAnimator.getPhaseY());
     }
 
-    @Override
     protected boolean passesCheck() {
-        return mChart.getBarData().getYValCount() < mChart.getMaxVisibleCount()
+        return mChart.getEasyData().getYValCount() < mChart.getMaxVisibleCount()
                 * mViewPortHandler.getScaleY();
     }
 }

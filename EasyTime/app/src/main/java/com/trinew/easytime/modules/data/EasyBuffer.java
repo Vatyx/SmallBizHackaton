@@ -1,8 +1,6 @@
 package com.trinew.easytime.modules.data;
 
 import com.github.mikephil.charting.buffer.AbstractBuffer;
-import com.github.mikephil.charting.data.BarEntry;
-import com.trinew.easytime.models.ParseStamp;
 
 import java.util.List;
 
@@ -63,15 +61,15 @@ public class EasyBuffer extends AbstractBuffer<EasyEntry> {
             float x = e.getXIndex() + e.getXIndex() * dataSetOffset + mDataSetIndex
                     + mGroupSpace * e.getXIndex() + groupSpaceHalf;
             float y = e.getVal();
-            List<ParseStamp> vals = e.getStamps();
+            float[] vals = e.getStampVals();
 
             float posY = 0f;
             float yStart = 0f;
 
             // fill the stack
-            for (int k = 0; k < vals.size(); k++) {
+            for (int k = 0; k < vals.length; k++) {
 
-                float value = vals.get(k);
+                float value = vals[k];
 
                 y = posY;
                 yStart = posY + value;

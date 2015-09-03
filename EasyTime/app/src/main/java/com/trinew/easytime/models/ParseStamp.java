@@ -4,6 +4,9 @@ import com.parse.ParseClassName;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
+import java.util.Calendar;
+import java.util.Date;
+
 @ParseClassName("Stamp")
 public class ParseStamp extends ParseObject {
 
@@ -32,4 +35,15 @@ public class ParseStamp extends ParseObject {
 
     public ParseGeoPoint getLocation() { return getParseGeoPoint(STAMP_KEY_LOCATION); }
     public void setLocation(ParseGeoPoint location) { put(STAMP_KEY_LOCATION, location); }
+
+    // returns the time value of the stamp (hour + minute) out of 24
+    // used when charting stamp data
+    public float getTimeValue() {
+        Date stampDate = getCreatedAt();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(stampDate);
+        int stampHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int stampMinute = calendar.get(Calendar.MINUTE);
+        return (float) stampHour + (float) stampMinute / 60f;
+    }
 }
