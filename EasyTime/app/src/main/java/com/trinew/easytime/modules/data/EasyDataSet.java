@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by jonathanlu on 9/2/15.
  */
-public class StampsDataSet extends BarLineScatterCandleDataSet<StampsEntry> {
+public class EasyDataSet extends BarLineScatterCandleDataSet<EasyEntry> {
 
     /**
      * space indicator between the bars 0.1f == 10 %
@@ -47,7 +47,7 @@ public class StampsDataSet extends BarLineScatterCandleDataSet<StampsEntry> {
             "Stack"
     };
 
-    public StampsDataSet(List<StampsEntry> yVals, String label) {
+    public EasyDataSet(List<EasyEntry> yVals, String label) {
         super(yVals, label);
 
         mHighLightColor = Color.rgb(0, 0, 0);
@@ -57,15 +57,15 @@ public class StampsDataSet extends BarLineScatterCandleDataSet<StampsEntry> {
     }
 
     @Override
-    public DataSet<StampsEntry> copy() {
+    public DataSet<EasyEntry> copy() {
 
-        List<StampsEntry> yVals = new ArrayList<>();
+        List<EasyEntry> yVals = new ArrayList<>();
 
         for (int i = 0; i < mYVals.size(); i++) {
             yVals.add((mYVals.get(i)).copy());
         }
 
-        StampsDataSet copied = new StampsDataSet(yVals, getLabel());
+        EasyDataSet copied = new EasyDataSet(yVals, getLabel());
         copied.mColors = mColors;
         copied.mStackSize = mStackSize;
         copied.mBarSpace = mBarSpace;
@@ -81,7 +81,7 @@ public class StampsDataSet extends BarLineScatterCandleDataSet<StampsEntry> {
      * Calculates the total number of entries this DataSet represents, including
      * stacks. All values belonging to a stack are calculated separately.
      */
-    private void calcEntryCountIncludingStacks(List<StampsEntry> yVals) {
+    private void calcEntryCountIncludingStacks(List<EasyEntry> yVals) {
 
         mEntryCountStacks = 0;
 
@@ -100,7 +100,7 @@ public class StampsDataSet extends BarLineScatterCandleDataSet<StampsEntry> {
      * calculates the maximum stacksize that occurs in the Entries array of this
      * DataSet
      */
-    private void calcStackSize(List<StampsEntry> yVals) {
+    private void calcStackSize(List<EasyEntry> yVals) {
 
         for (int i = 0; i < yVals.size(); i++) {
 
@@ -133,7 +133,7 @@ public class StampsDataSet extends BarLineScatterCandleDataSet<StampsEntry> {
 
         for (int i = start; i <= endValue; i++) {
 
-            StampsEntry e = mYVals.get(i);
+            EasyEntry e = mYVals.get(i);
 
             if (e != null && e.getStamps() != null && !Float.isNaN(e.getVal())) {
                 if (e.getVal() < mYMin)

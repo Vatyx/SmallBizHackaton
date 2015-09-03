@@ -13,9 +13,6 @@ import android.widget.TextView;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
@@ -25,14 +22,15 @@ import com.parse.ParseUser;
 import com.trinew.easytime.R;
 import com.trinew.easytime.models.ParseStamp;
 import com.trinew.easytime.modules.ProfileBuilder;
-import com.trinew.easytime.modules.data.StampsEntry;
+import com.trinew.easytime.modules.data.EasyData;
+import com.trinew.easytime.modules.data.EasyDataSet;
+import com.trinew.easytime.modules.data.EasyEntry;
 import com.trinew.easytime.modules.stamps.StampCollection;
 import com.trinew.easytime.modules.stamps.StampCollectionBox;
-import com.trinew.easytime.views.EasyHorizontalLineChart;
+import com.trinew.easytime.views.charts.EasyChart;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -50,7 +48,7 @@ public class GraphActivity extends ActionBarActivity implements OnChartValueSele
     private TextView genericErrorText;
     private TextView noStampsErrorText;
 
-    private EasyHorizontalLineChart mChart;
+    private EasyChart mChart;
 
     private Typeface tf;
 
@@ -79,7 +77,7 @@ public class GraphActivity extends ActionBarActivity implements OnChartValueSele
         noStampsErrorText = (TextView) findViewById(R.id.noStampsErrorText);
 
         // init charts
-        mChart = (EasyHorizontalLineChart) findViewById(R.id.graphChart);
+        mChart = (EasyChart) findViewById(R.id.graphChart);
         mChart.setOnChartValueSelectedListener(this);
         // mChart.setHighlightEnabled(false);
 
@@ -200,8 +198,8 @@ public class GraphActivity extends ActionBarActivity implements OnChartValueSele
                 // each StampCollection contains a list of stamps and the day that the collection
                 // is associated with
                 List<StampCollection> stampCollections = stampCollectionBox.getStampCollections();
-                List<BarDataSet> dataSets = new ArrayList<>();
-                List<StampsEntry> collectionEntries = new ArrayList<>();
+                List<EasyDataSet> dataSets = new ArrayList<>();
+                List<EasyEntry> collectionEntries = new ArrayList<>();
 
                 int j = 0;
                 for (int i = 0; i < stampCollections.size(); i++) {
@@ -215,15 +213,15 @@ public class GraphActivity extends ActionBarActivity implements OnChartValueSele
 
                     // prepare the yVal array
                     List<ParseStamp> collectionStamps = stampCollection.getStamps();
-                    collectionEntries.add(new StampsEntry(collectionStamps, i));
+                    collectionEntries.add(new EasyEntry(collectionStamps, i));
                 }
 
                 //Log.i("GraphActivity", collectionEntries.size() + ":" + collectionEntries.get(0).getVals().length);
 
-                BarDataSet dataSet = new BarDataSet(collectionEntries, "DataSet");
+                EasyDataSet dataSet = new EasyDataSet(collectionEntries, "DataSet");
                 dataSets.add(dataSet);
 
-                BarData data = new BarData(xVals, dataSets);
+                EasyData data = new EasyData(xVals, dataSets);
                 data.setValueTextSize(10f);
                 //data.setValueTypeface(tf);
 

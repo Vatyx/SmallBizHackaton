@@ -10,27 +10,27 @@ import java.util.List;
 /**
  * Created by jonathanlu on 9/2/15.
  */
-public class StampsEntry extends Entry {
+public class EasyEntry extends Entry {
 
     private List<ParseStamp> mStamps;
 
     private float minValue;
     private float maxValue;
 
-    public StampsEntry(List<ParseStamp> stamps, int xIndex) {
+    public EasyEntry(List<ParseStamp> stamps, int xIndex) {
         super(0f, xIndex);
         calcMinMax();
         this.mStamps = stamps;
     }
 
-    public StampsEntry(List<ParseStamp> stamps, int xIndex, String label) {
+    public EasyEntry(List<ParseStamp> stamps, int xIndex, String label) {
         super(0f, xIndex, label);
         calcMinMax();
         this.mStamps = stamps;
     }
 
-    public StampsEntry copy() {
-        StampsEntry copied = new StampsEntry(mStamps, getXIndex());
+    public EasyEntry copy() {
+        EasyEntry copied = new EasyEntry(mStamps, getXIndex());
         return copied;
     }
 

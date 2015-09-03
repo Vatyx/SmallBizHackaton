@@ -1,4 +1,4 @@
-package com.trinew.easytime.views;
+package com.trinew.easytime.views.charts;
 
 import android.content.Context;
 import android.graphics.Matrix;
@@ -7,20 +7,21 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.components.Legend.LegendPosition;
 import com.github.mikephil.charting.components.XAxis.XAxisPosition;
 import com.github.mikephil.charting.components.YAxis.AxisDependency;
-import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.highlight.HorizontalBarHighlighter;
 import com.github.mikephil.charting.renderer.HorizontalBarChartRenderer;
-import com.github.mikephil.charting.renderer.XAxisRendererHorizontalBarChart;
 import com.github.mikephil.charting.renderer.YAxisRendererHorizontalBarChart;
 import com.github.mikephil.charting.utils.TransformerHorizontalBarChart;
 import com.github.mikephil.charting.utils.Utils;
+import com.trinew.easytime.modules.data.EasyData;
+import com.trinew.easytime.modules.data.EasyDataProvider;
+import com.trinew.easytime.modules.data.EasyDataSet;
 
 /**
  * BarChart with horizontal bar orientation. In this implementation, x- and y-axis are switched, meaning the YAxis class
@@ -28,23 +29,43 @@ import com.github.mikephil.charting.utils.Utils;
  *
  * @author Philipp Jahoda
  */
-public class EasyHorizontalLineChart extends BarChart {
+public class EasyChart extends BarLineChartBase<EasyData> implements EasyDataProvider {
 
-    public EasyHorizontalLineChart(Context context) {
+    /** flag that enables or disables the highlighting arrow */
+    private boolean mDrawHighlightArrow = false;
+
+    /**
+     * if set to true, all values are drawn above their bars, instead of below their top
+     */
+    private boolean mDrawValueAboveBar = true;
+
+    /**
+     * if set to true, all values of a stack are drawn individually, and not just their sum
+     */
+    // private boolean mDrawValuesForWholeStack = true;
+
+    /**
+     * if set to true, a grey area is drawn behind each bar that indicates the maximum value
+     */
+    private boolean mDrawBarShadow = false;
+
+    public EasyChart(Context context) {
         super(context);
     }
 
-    public EasyHorizontalLineChart(Context context, AttributeSet attrs) {
+    public EasyChart(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public EasyHorizontalLineChart(Context context, AttributeSet attrs, int defStyle) {
+    public EasyChart(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
     @Override
     protected void init() {
         super.init();
+
+        mXChartMin = -0.5f;
 
         mLeftAxisTransformer = new TransformerHorizontalBarChart(mViewPortHandler);
         mRightAxisTransformer = new TransformerHorizontalBarChart(mViewPortHandler);
@@ -54,7 +75,22 @@ public class EasyHorizontalLineChart extends BarChart {
 
         mAxisRendererLeft = new YAxisRendererHorizontalBarChart(mViewPortHandler, mAxisLeft, mLeftAxisTransformer);
         mAxisRendererRight = new YAxisRendererHorizontalBarChart(mViewPortHandler, mAxisRight, mRightAxisTransformer);
-        mXAxisRenderer = new XAxisRendererHorizontalBarChart(mViewPortHandler, mXAxis, mLeftAxisTransformer, this);
+        mXAxisRenderer = new XAxisRendererEasyChart(mViewPortHandler, mXAxis, mLeftAxisTransformer, this);
+    }
+
+    @Override
+    protected void calcMinMax() {
+        super.calcMinMax();
+
+        // increase deltax by 1 because the bars have a width of 1
+        mDeltaX += 0.5f;
+
+        // extend xDelta to make space for multiple datasets (if ther are one)
+        mDeltaX *= mData.getDataSetCount();
+
+        float groupSpace = mData.getGroupSpace();
+        mDeltaX += mData.getXValCount() * groupSpace;
+        mXChartMax = mDeltaX - mXChartMin;
     }
 
     @Override
@@ -153,10 +189,9 @@ public class EasyHorizontalLineChart extends BarChart {
             mXAxis.mAxisLabelModulus = 1;
     }
 
-    @Override
     public RectF getBarBounds(BarEntry e) {
 
-        BarDataSet set = mData.getDataSetForEntry(e);
+        EasyDataSet set = mData.getDataSetForEntry(e);
 
         if (set == null)
             return null;
@@ -208,6 +243,85 @@ public class EasyHorizontalLineChart extends BarChart {
             return null;
         } else
             return mHighlighter.getHighlight(y, x); // switch x and y
+    }
+
+    /**
+     * set this to true to draw the highlightning arrow
+     *
+     * @param enabled
+     */
+    public void setDrawHighlightArrow(boolean enabled) {
+        mDrawHighlightArrow = enabled;
+    }
+
+    /**
+     * returns true if drawing the highlighting arrow is enabled, false if not
+     *
+     * @return
+     */
+    public boolean isDrawHighlightArrowEnabled() {
+        return mDrawHighlightArrow;
+    }
+
+    /**
+     * If set to true, all values are drawn above their bars, instead of below their top.
+     *
+     * @param enabled
+     */
+    public void setDrawValueAboveBar(boolean enabled) {
+        mDrawValueAboveBar = enabled;
+    }
+
+    /**
+     * returns true if drawing values above bars is enabled, false if not
+     *
+     * @return
+     */
+    public boolean isDrawValueAboveBarEnabled() {
+        return mDrawValueAboveBar;
+    }
+
+    // /**
+    // * if set to true, all values of a stack are drawn individually, and not
+    // * just their sum
+    // *
+    // * @param enabled
+    // */
+    // public void setDrawValuesForWholeStack(boolean enabled) {
+    // mDrawValuesForWholeStack = enabled;
+    // }
+    //
+    // /**
+    // * returns true if all values of a stack are drawn, and not just their sum
+    // *
+    // * @return
+    // */
+    // public boolean isDrawValuesForWholeStackEnabled() {
+    // return mDrawValuesForWholeStack;
+    // }
+
+    /**
+     * If set to true, a grey area is drawn behind each bar that indicates the maximum value. Enabling his will reduce
+     * performance by about 50%.
+     *
+     * @param enabled
+     */
+    public void setDrawBarShadow(boolean enabled) {
+        mDrawBarShadow = enabled;
+    }
+
+    /**
+     * returns true if drawing shadows (maxvalue) for each bar is enabled, false if not
+     *
+     * @return
+     */
+    public boolean isDrawBarShadowEnabled() {
+        return mDrawBarShadow;
+    }
+
+    @Override
+    public EasyData getStampsData() {
+        return mData;
     }
 
     /**
