@@ -6,7 +6,6 @@ import com.github.mikephil.charting.interfaces.BarLineScatterCandleBubbleDataPro
  * Created by Jonathan on 9/3/2015.
  */
 public interface EasyDataProvider extends BarLineScatterCandleBubbleDataProvider {
-
     EasyData getEasyData();
     boolean isDrawBarShadowEnabled();
     boolean isDrawValueAboveBarEnabled();

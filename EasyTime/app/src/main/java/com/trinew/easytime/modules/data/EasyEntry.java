@@ -19,14 +19,14 @@ public class EasyEntry extends Entry {
 
     public EasyEntry(List<ParseStamp> stamps, int xIndex) {
         super(0f, xIndex);
-        calcMinMax();
         this.mStamps = stamps;
+        calcMinMax();
     }
 
     public EasyEntry(List<ParseStamp> stamps, int xIndex, String label) {
         super(0f, xIndex, label);
-        calcMinMax();
         this.mStamps = stamps;
+        calcMinMax();
     }
 
     public EasyEntry copy() {

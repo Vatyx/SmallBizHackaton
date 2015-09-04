@@ -14,14 +14,12 @@ import com.github.mikephil.charting.components.YAxis.AxisDependency;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.highlight.HorizontalBarHighlighter;
-import com.github.mikephil.charting.renderer.HorizontalBarChartRenderer;
 import com.github.mikephil.charting.renderer.YAxisRendererHorizontalBarChart;
-import com.github.mikephil.charting.utils.TransformerHorizontalBarChart;
 import com.github.mikephil.charting.utils.Utils;
 import com.trinew.easytime.modules.data.EasyData;
 import com.trinew.easytime.modules.data.EasyDataProvider;
 import com.trinew.easytime.modules.data.EasyDataSet;
+import com.trinew.easytime.utils.EasyTransformer;
 
 /**
  * BarChart with horizontal bar orientation. In this implementation, x- and y-axis are switched, meaning the YAxis class
@@ -67,11 +65,11 @@ public class EasyChart extends BarLineChartBase<EasyData> implements EasyDataPro
 
         mXChartMin = -0.5f;
 
-        mLeftAxisTransformer = new TransformerHorizontalBarChart(mViewPortHandler);
-        mRightAxisTransformer = new TransformerHorizontalBarChart(mViewPortHandler);
+        mLeftAxisTransformer = new EasyTransformer(mViewPortHandler);
+        mRightAxisTransformer = new EasyTransformer(mViewPortHandler);
 
-        mRenderer = new HorizontalBarChartRenderer(this, mAnimator, mViewPortHandler);
-        mHighlighter = new HorizontalBarHighlighter(this);
+        mRenderer = new EasyChartRenderer(this, mAnimator, mViewPortHandler);
+        mHighlighter = new EasyHighlighter(this);
 
         mAxisRendererLeft = new YAxisRendererHorizontalBarChart(mViewPortHandler, mAxisLeft, mLeftAxisTransformer);
         mAxisRendererRight = new YAxisRendererHorizontalBarChart(mViewPortHandler, mAxisRight, mRightAxisTransformer);
@@ -189,7 +187,7 @@ public class EasyChart extends BarLineChartBase<EasyData> implements EasyDataPro
             mXAxis.mAxisLabelModulus = 1;
     }
 
-    public RectF getBarBounds(BarEntry e) {
+    public RectF getEasyBounds(BarEntry e) {
 
         EasyDataSet set = mData.getDataSetForEntry(e);
 
@@ -320,7 +318,7 @@ public class EasyChart extends BarLineChartBase<EasyData> implements EasyDataPro
     }
 
     @Override
-    public EasyData getStampsData() {
+    public EasyData getEasyData() {
         return mData;
     }
 
