@@ -38,14 +38,20 @@ public class EasyEntry extends Entry {
         return mStamps;
     }
 
-    public float[] getStampVals() {
-        float[] resultVals = new float[mStamps.size()];
-
-        for(int i = 0; i < mStamps.size(); i++) {
-            resultVals[i] = mStamps.get(i).getTimeValue();
+    public float[] getStampValues() {
+        float[] stampVals = new float[mStamps.size()];
+        for(int i = 0; i < stampVals.length; i++) {
+            stampVals[i] = mStamps.get(i).getTimeValue();
         }
+        return stampVals;
+    }
 
-        return resultVals;
+    public int[] getStampFlags() {
+        int[] stampFlags = new int[mStamps.size()];
+        for(int i = 0; i < stampFlags.length; i++) {
+            stampFlags[i] = mStamps.get(i).getFlag();
+        }
+        return stampFlags;
     }
 
     public void setStamps(List<ParseStamp> stamps) {

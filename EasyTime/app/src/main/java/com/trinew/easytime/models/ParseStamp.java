@@ -19,8 +19,8 @@ public class ParseStamp extends ParseObject {
     public static final int FLAG_CHECK_IN = 0;
     public static final int FLAG_CHECK_OUT = 1;
 
-    public String getFlag() {
-        return getString(STAMP_KEY_FLAG);
+    public int getFlag() {
+        return getInt(STAMP_KEY_FLAG);
     }
     public void setFlag(int flag) {
         put(STAMP_KEY_FLAG, flag);

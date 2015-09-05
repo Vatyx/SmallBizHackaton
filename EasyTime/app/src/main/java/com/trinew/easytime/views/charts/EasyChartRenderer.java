@@ -35,8 +35,6 @@ public class EasyChartRenderer extends DataRenderer {
 
     protected EasyBuffer[] mBuffers;
 
-    protected Paint mShadowPaint;
-
     public EasyChartRenderer(EasyDataProvider chart, ChartAnimator animator,
                                       ViewPortHandler viewPortHandler) {
         super(animator, viewPortHandler);
@@ -49,9 +47,6 @@ public class EasyChartRenderer extends DataRenderer {
         // set alpha after color
         mHighlightPaint.setAlpha(120);
 
-        mShadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mShadowPaint.setStyle(Paint.Style.FILL);
-
         mValuePaint.setTextAlign(Paint.Align.LEFT);
     }
 
@@ -63,9 +58,9 @@ public class EasyChartRenderer extends DataRenderer {
 
         for (int i = 0; i < mBuffers.length; i++) {
             EasyDataSet set = easyData.getDataSetByIndex(i);
-            mBuffers[i] = new EasyBuffer(set.getValueCount() * 4 * set.getStackSize(),
+            mBuffers[i] = new EasyBuffer(set.getValueCount() * 2,
                     easyData.getGroupSpace(),
-                    easyData.getDataSetCount(), set.isStacked());
+                    easyData.getDataSetCount());
         }
     }
 
@@ -88,8 +83,6 @@ public class EasyChartRenderer extends DataRenderer {
 
         Transformer trans = mChart.getTransformer(dataSet.getAxisDependency());
 
-        mShadowPaint.setColor(dataSet.getBarShadowColor());
-
         float phaseX = mAnimator.getPhaseX();
         float phaseY = mAnimator.getPhaseY();
 
@@ -98,9 +91,7 @@ public class EasyChartRenderer extends DataRenderer {
         // initialize the buffer
         EasyBuffer buffer = mBuffers[index];
         buffer.setPhases(phaseX, phaseY);
-        buffer.setBarSpace(dataSet.getBarSpace());
         buffer.setDataSet(index);
-        buffer.setInverted(mChart.isInverted(dataSet.getAxisDependency()));
 
         buffer.feed(entries);
 
@@ -113,12 +104,6 @@ public class EasyChartRenderer extends DataRenderer {
 
             if (!mViewPortHandler.isInBoundsBottom(buffer.buffer[j + 1]))
                 continue;
-
-            if (mChart.isDrawBarShadowEnabled()) {
-                c.drawRect(mViewPortHandler.contentLeft(), buffer.buffer[j + 1],
-                        mViewPortHandler.contentRight(),
-                        buffer.buffer[j + 3], mShadowPaint);
-            }
 
             // Set the color for the currently drawn value. If the index
             // is

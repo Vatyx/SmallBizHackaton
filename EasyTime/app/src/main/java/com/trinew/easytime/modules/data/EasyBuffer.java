@@ -9,88 +9,90 @@ import java.util.List;
  */
 public class EasyBuffer extends AbstractBuffer<EasyEntry> {
 
-    protected float mBarSpace = 0f;
     protected float mGroupSpace = 0f;
     protected int mDataSetIndex = 0;
     protected int mDataSetCount = 1;
-    protected boolean mContainsStacks = false;
-    protected boolean mInverted = false;
 
-    public EasyBuffer(int size, float groupspace, int dataSetCount, boolean containsStacks) {
+    // hold flags for each data point
+    public final int[] flagBuffer;
+
+    public EasyBuffer(int size, float groupspace, int dataSetCount) {
         super(size);
+
+        flagBuffer = new int[size];
+
+        //super((size < 4) ? 4 : size);
         this.mGroupSpace = groupspace;
         this.mDataSetCount = dataSetCount;
-        this.mContainsStacks = containsStacks;
-    }
-
-    public void setBarSpace(float barspace) {
-        this.mBarSpace = barspace;
     }
 
     public void setDataSet(int index) {
         this.mDataSetIndex = index;
     }
 
-    public void setInverted(boolean inverted) {
-        this.mInverted = inverted;
+    public void moveTo(float x, float y, int flag) {
+
+        if (index != 0)
+            return;
+
+        flagBuffer[index] = flag;
+        buffer[index++] = x;
+        buffer[index++] = y;
+
+        // in case just one entry, this is overwritten when lineTo is called
+        buffer[index] = x;
+        buffer[index + 1] = y;
     }
 
-    protected void addBar(float left, float top, float right, float bottom) {
+    public void lineTo(float x, float y, int flag) {
 
-        buffer[index++] = left;
-        buffer[index++] = top;
-        buffer[index++] = right;
-        buffer[index++] = bottom;
+        if (index == 2) {
+            buffer[index++] = x;
+            buffer[index++] = y;
+        } else {
+
+            float prevX = buffer[index - 2];
+            float prevY = buffer[index - 1];
+            buffer[index++] = prevX;
+            buffer[index++] = prevY;
+            buffer[index++] = x;
+            buffer[index++] = y;
+        }
     }
 
     @Override
     public void feed(List<EasyEntry> entries) {
 
-        float size = entries.size() * phaseX;
+        int size = (int) Math.ceil((mTo - mFrom) * phaseX + mFrom);
+        int from = mFrom + 1;
 
         int dataSetOffset = (mDataSetCount - 1);
-        float barSpaceHalf = mBarSpace / 2f;
         float groupSpaceHalf = mGroupSpace / 2f;
-        float barWidth = 0.5f;
 
-        for (int i = 0; i < size; i++) {
+        for (int i = from; i < size; i++) {
 
             EasyEntry e = entries.get(i);
 
             // calculate the x-position, depending on datasetcount
-            float x = e.getXIndex() + e.getXIndex() * dataSetOffset + mDataSetIndex
+            float y = e.getXIndex() + e.getXIndex() * dataSetOffset + mDataSetIndex
                     + mGroupSpace * e.getXIndex() + groupSpaceHalf;
-            float y = e.getVal();
-            float[] vals = e.getStampVals();
-
-            float posY = 0f;
-            float yStart = 0f;
+            float[] vals = e.getStampValues();
+            int[] flags = e.getStampFlags();
 
             // fill the stack
             for (int k = 0; k < vals.length; k++) {
+                float x1 = vals[k] * phaseY;
+                int f1 = flags[k];
 
-                float value = vals[k];
+                moveTo(x1, y);
 
-                y = posY;
-                yStart = posY + value;
-                posY = yStart;
+                if(k + 1 < vals.length) {
 
-                float bottom = x - barWidth + barSpaceHalf;
-                float top = x + barWidth - barSpaceHalf;
-                float left, right;
-                if (mInverted) {
-                    left = y >= yStart ? y : yStart;
-                    right = y <= yStart ? y : yStart;
-                } else {
-                    right = y >= yStart ? y : yStart;
-                    left = y <= yStart ? y : yStart;
+                    float x2 = vals[k + 1] * phaseY;
+                    int f2 = flags[k + 1];
+
+                    lineTo(x2, y);
                 }
-
-                // multiply the height of the rect with the phase
-                right *= phaseY;
-                left *= phaseY;
-
-                addBar(left, top, right, bottom);
             }
         }
 
