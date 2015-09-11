@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:minHeight="32dp" >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/listener_image"
+        android:focusable="false"
+        android:contentDescription="@string/content_missing_description"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="false"
+        android:id="@+id/thumbContainer"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:id="@+id/thumbImage"
+            android:src="@drawable/circle"
+            android:padding="4dp"
+            android:tint="#800" />
+
+        <TextView
+            tools:text="OUT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/thumbText"
+            android:textSize="16dp"
+            android:textColor="#eee"
+            android:layout_gravity="center"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:singleLine="true"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"
+            android:padding="4dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/header_container"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@+id/thumbContainer">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/timeText"
+            android:textSize="16sp"
+            android:textColor="#333"
+            tools:text="9:30 AM"
+            android:textStyle="normal"
+            android:singleLine="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/commentText"
+            android:textSize="14sp"
+            android:textColor="#666"
+            tools:text="Fed my cat"
+            android:textStyle="normal"
+            android:singleLine="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_below="@+id/timeText"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

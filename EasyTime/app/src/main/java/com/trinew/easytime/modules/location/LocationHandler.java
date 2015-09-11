@@ -37,7 +37,7 @@ public class LocationHandler {
         }
 
         Location location = locationManager.getLastKnownLocation(provider);
-        if (!location.hasAccuracy()) return null;
+        if (location == null || !location.hasAccuracy()) return null;
         final float accuracy = location.getAccuracy();
 
         if (accuracy <= MAX_METERS && accuracy != 0.0f) {

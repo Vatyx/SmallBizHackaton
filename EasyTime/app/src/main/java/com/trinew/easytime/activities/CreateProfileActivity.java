@@ -119,7 +119,7 @@ public class CreateProfileActivity extends Activity {
         user.setUsername(username);
         user.setPassword(password);
         user.put("name", legalName);
-        user.put("employerId", employerId);
+        //user.put("employerId", employerId);
         user.put("privilege", 0);
         user.put("stamps", new ArrayList<ParseStamp>());
 

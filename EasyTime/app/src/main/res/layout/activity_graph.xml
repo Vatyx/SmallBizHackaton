@@ -8,102 +8,25 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:theme="@style/ToolBarStyle.Main" >
+        android:theme="@style/ToolBarStyle.Main" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:layout_width="75dp"
-                android:layout_height="36dp"
-                android:id="@+id/logo"
-                android:contentDescription="@string/content_missing_description"
-                android:src="@mipmap/drawable_logo_white"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:visibility="gone"
-                android:layout_alignParentStart="false" />
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="false"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:id="@+id/headerContainer"
-                android:layout_centerHorizontal="true">
-
-            </FrameLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp">
-
-            </RelativeLayout>
-
-        </RelativeLayout>
-
-    </android.support.v7.widget.Toolbar>
-
-    <RelativeLayout
+    <com.astuetz.PagerSlidingTabStrip
+        android:id="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/chartContainer">
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:pstsPaddingMiddle="false"
+        app:pstsShouldExpand="true"
+        app:pstsIndicatorColor="@color/very_dark_gray"
+        app:pstsIndicatorHeight="4dp"
+        android:visibility="gone" />
 
-        <com.trinew.easytime.views.charts.EasyChart
-            android:id="@+id/graphChart"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/errorContainer"
-            android:background="#fff"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/noStampsErrorText"
-                android:layout_centerInParent="true"
-                android:visibility="gone"
-                android:text="You don&apos;t have any stamps!" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/genericErrorText"
-                android:layout_centerInParent="true"
-                android:text="There was a problem loading your stamps!"
-                android:visibility="gone" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/progressContainer"
-            android:background="#fff"
-            android:visibility="gone">
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/chartProgress"
-                android:layout_centerInParent="true" />
-        </RelativeLayout>
-
-    </RelativeLayout>
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

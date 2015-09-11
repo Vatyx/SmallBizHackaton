@@ -22,14 +22,13 @@ public abstract class BaseTimer {
             long millis = System.currentTimeMillis() - startTime;
 
             onUpdate(millis);
-
-            timerHandler.postDelayed(this, 500);
+            timerHandler.postDelayed(this, 1000);
         }
     };
 
     // events
 
-    public abstract void onUpdate(long currTime);
+    public abstract void onUpdate(long elapsedTimeMillis);
 
     // timer getters
 

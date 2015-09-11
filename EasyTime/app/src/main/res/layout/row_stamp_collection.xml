@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:minHeight="84dp"
+    android:padding="4dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/listener_image"
+        android:focusable="false"
+        android:contentDescription="@string/content_missing_description"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/header_container"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="32dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dateText"
+            android:textSize="16sp"
+            android:textColor="#333"
+            tools:text="8/31"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/durationText"
+            android:textSize="14sp"
+            android:textColor="#666"
+            tools:text="7h"
+            android:textStyle="normal"
+            android:singleLine="true"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_below="@+id/dateText" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="true"
+        android:id="@+id/likes_container"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="16dp"
+        android:visibility="gone">
+
+        <TextView
+            tools:text="9h"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/count_text"
+            android:textSize="20sp"
+            android:textColor="#333"
+            android:layout_gravity="center"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:singleLine="true"
+            android:textStyle="bold"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+</RelativeLayout>

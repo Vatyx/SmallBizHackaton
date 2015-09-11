@@ -17,10 +17,10 @@ public class EasyTimer extends BaseTimer {
     // event overrides
 
     @Override
-    public void onUpdate(long currTime) {
+    public void onUpdate(long elapsedTimeMillis) {
         if(easyTimerListener != null) {
             // update with remaining time converted to seconds
-            easyTimerListener.onUpdate((int) (currTime / 1000));
+            easyTimerListener.onUpdate(elapsedTimeMillis);
         }
     }
 
@@ -44,6 +44,6 @@ public class EasyTimer extends BaseTimer {
     // interaction
 
     public interface EasyTimerListener {
-        void onUpdate(int remainingTime);
+        void onUpdate(long elapsedTimeMillis);
     }
 }

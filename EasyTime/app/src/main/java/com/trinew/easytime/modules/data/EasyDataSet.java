@@ -1,102 +1,264 @@
 package com.trinew.easytime.modules.data;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 
-import com.github.mikephil.charting.data.BarLineScatterCandleDataSet;
 import com.github.mikephil.charting.data.DataSet;
+import com.github.mikephil.charting.data.LineRadarDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by jonathanlu on 9/2/15.
+ * Created by jonathanlu on 9/6/15.
  */
-public class EasyDataSet extends BarLineScatterCandleDataSet<EasyEntry> {
+public class EasyDataSet extends LineRadarDataSet<EasyEntry> {
 
-    /**
-     * the alpha value used to draw the highlight indicator bar
-     */
-    private int mHighLightAlpha = 120;
+    /** List representing all colors that are used for the circles */
+    private List<Integer> mCircleColors = null;
 
-    public EasyDataSet(List<EasyEntry> yVals, String label) {
-        super(yVals, label);
+    /** the color of the inner circles */
+    private int mCircleColorHole = Color.WHITE;
 
-        mHighLightColor = Color.rgb(0, 0, 0);
+    /** the radius of the circle-shaped value indicators */
+    private float mCircleSize = 8f;
+
+    /** the path effect of this DataSet that makes dashed lines possible */
+    private DashPathEffect mDashPathEffect = null;
+
+    /** if true, drawing circles is enabled */
+    private boolean mDrawCircles = true;
+
+    private boolean mDrawCircleHole = true;
+
+    public EasyDataSet(List<EasyEntry> entries, String label) {
+        super(entries, label);
+
+        // mCircleSize = Utils.convertDpToPixel(4f);
+        // mLineWidth = Utils.convertDpToPixel(1f);
+
+        mCircleColors = new ArrayList<>();
+
+        // default colors
+        // mColors.add(Color.rgb(192, 255, 140));
+        // mColors.add(Color.rgb(255, 247, 140));
+        mCircleColors.add(Color.rgb(140, 234, 255));
     }
 
     @Override
     public DataSet<EasyEntry> copy() {
 
-        List<EasyEntry> yVals = new ArrayList<>();
+        List<EasyEntry> entries = new ArrayList<>();
 
         for (int i = 0; i < mYVals.size(); i++) {
-            yVals.add((mYVals.get(i)).copy());
+            entries.add(mYVals.get(i).copy());
         }
 
-        EasyDataSet copied = new EasyDataSet(yVals, getLabel());
+        EasyDataSet copied = new EasyDataSet(entries, getLabel());
         copied.mColors = mColors;
+        copied.mCircleSize = mCircleSize;
+        copied.mCircleColors = mCircleColors;
+        copied.mDashPathEffect = mDashPathEffect;
+        copied.mDrawCircles = mDrawCircles;
         copied.mHighLightColor = mHighLightColor;
-        copied.mHighLightAlpha = mHighLightAlpha;
 
         return copied;
     }
 
-    @Override
-    protected void calcMinMax(int start, int end) {
-        final int yValCount = mYVals.size();
-
-        if (yValCount == 0)
-            return;
-
-        int endValue;
-
-        if (end == 0 || end >= yValCount)
-            endValue = yValCount - 1;
-        else
-            endValue = end;
-
-        mLastStart = start;
-        mLastEnd = endValue;
-
-        mYMin = Float.MAX_VALUE;
-        mYMax = -Float.MAX_VALUE;
-
-        for (int i = start; i <= endValue; i++) {
-
-            EasyEntry e = mYVals.get(i);
-
-            if (e != null && e.getStamps() != null && !Float.isNaN(e.getVal())) {
-                if (e.getVal() < mYMin)
-                    mYMin = Math.min(e.getMinValue(), mYMin);
-
-                if (e.getVal() > mYMax)
-                    mYMax = Math.max(e.getMaxValue(), mYMax);
-            }
-        }
-
-        if (mYMin == Float.MAX_VALUE) {
-            mYMin = 0.f;
-            mYMax = 0.f;
-        }
-    }
-
     /**
-     * Set the alpha value (transparency) that is used for drawing the highlight
-     * indicator bar. min = 0 (fully transparent), max = 255 (fully opaque)
+     * sets the size (radius) of the circle shpaed value indicators, default
+     * size = 4f
      *
-     * @param alpha
+     * @param size
      */
-    public void setHighLightAlpha(int alpha) {
-        mHighLightAlpha = alpha;
+    public void setCircleSize(float size) {
+        mCircleSize = Utils.convertDpToPixel(size);
     }
 
     /**
-     * Returns the alpha value (transparency) that is used for drawing the
-     * highlight indicator.
+     * returns the circlesize
+     */
+    public float getCircleSize() {
+        return mCircleSize;
+    }
+
+    /**
+     * Enables the line to be drawn in dashed mode, e.g. like this
+     * "- - - - - -". THIS ONLY WORKS IF HARDWARE-ACCELERATION IS TURNED OFF.
+     * Keep in mind that hardware acceleration boosts performance.
+     *
+     * @param lineLength the length of the line pieces
+     * @param spaceLength the length of space in between the pieces
+     * @param phase offset, in degrees (normally, use 0)
+     */
+    public void enableDashedLine(float lineLength, float spaceLength, float phase) {
+        mDashPathEffect = new DashPathEffect(new float[] {
+                lineLength, spaceLength
+        }, phase);
+    }
+
+    /**
+     * Disables the line to be drawn in dashed mode.
+     */
+    public void disableDashedLine() {
+        mDashPathEffect = null;
+    }
+
+    /**
+     * Returns true if the dashed-line effect is enabled, false if not.
      *
      * @return
      */
-    public int getHighLightAlpha() {
-        return mHighLightAlpha;
+    public boolean isDashedLineEnabled() {
+        return mDashPathEffect == null ? false : true;
+    }
+
+    /**
+     * returns the DashPathEffect that is set for this DataSet
+     *
+     * @return
+     */
+    public DashPathEffect getDashPathEffect() {
+        return mDashPathEffect;
+    }
+
+    /**
+     * set this to true to enable the drawing of circle indicators for this
+     * DataSet, default true
+     *
+     * @param enabled
+     */
+    public void setDrawCircles(boolean enabled) {
+        this.mDrawCircles = enabled;
+    }
+
+    /**
+     * returns true if drawing circles for this DataSet is enabled, false if not
+     *
+     * @return
+     */
+    public boolean isDrawCirclesEnabled() {
+        return mDrawCircles;
+    }
+
+    /** ALL CODE BELOW RELATED TO CIRCLE-COLORS */
+
+    /**
+     * returns all colors specified for the circles
+     *
+     * @return
+     */
+    public List<Integer> getCircleColors() {
+        return mCircleColors;
+    }
+
+    /**
+     * Returns the color at the given index of the DataSet's circle-color array.
+     * Performs a IndexOutOfBounds check by modulus.
+     *
+     * @param index
+     * @return
+     */
+    public int getCircleColor(int index) {
+        return mCircleColors.get(index % mCircleColors.size());
+    }
+
+    /**
+     * Sets the colors that should be used for the circles of this DataSet.
+     * Colors are reused as soon as the number of Entries the DataSet represents
+     * is higher than the size of the colors array. Make sure that the colors
+     * are already prepared (by calling getResources().getColor(...)) before
+     * adding them to the DataSet.
+     *
+     * @param colors
+     */
+    public void setCircleColors(List<Integer> colors) {
+        mCircleColors = colors;
+    }
+
+    /**
+     * Sets the colors that should be used for the circles of this DataSet.
+     * Colors are reused as soon as the number of Entries the DataSet represents
+     * is higher than the size of the colors array. Make sure that the colors
+     * are already prepared (by calling getResources().getColor(...)) before
+     * adding them to the DataSet.
+     *
+     * @param colors
+     */
+    public void setCircleColors(int[] colors) {
+        this.mCircleColors = ColorTemplate.createColors(colors);
+    }
+
+    /**
+     * ets the colors that should be used for the circles of this DataSet.
+     * Colors are reused as soon as the number of Entries the DataSet represents
+     * is higher than the size of the colors array. You can use
+     * "new String[] { R.color.red, R.color.green, ... }" to provide colors for
+     * this method. Internally, the colors are resolved using
+     * getResources().getColor(...)
+     *
+     * @param colors
+     */
+    public void setCircleColors(int[] colors, Context c) {
+
+        List<Integer> clrs = new ArrayList<Integer>();
+
+        for (int color : colors) {
+            clrs.add(c.getResources().getColor(color));
+        }
+
+        mCircleColors = clrs;
+    }
+
+    /**
+     * Sets the one and ONLY color that should be used for this DataSet.
+     * Internally, this recreates the colors array and adds the specified color.
+     *
+     * @param color
+     */
+    public void setCircleColor(int color) {
+        resetCircleColors();
+        mCircleColors.add(color);
+    }
+
+    /**
+     * resets the circle-colors array and creates a new one
+     */
+    public void resetCircleColors() {
+        mCircleColors = new ArrayList<Integer>();
+    }
+
+    /**
+     * Sets the color of the inner circle of the line-circles.
+     *
+     * @param color
+     */
+    public void setCircleColorHole(int color) {
+        mCircleColorHole = color;
+    }
+
+    /**
+     * Returns the color of the inner circle.
+     *
+     * @return
+     */
+    public int getCircleHoleColor() {
+        return mCircleColorHole;
+    }
+
+    /**
+     * Set this to true to allow drawing a hole in each data circle.
+     *
+     * @param enabled
+     */
+    public void setDrawCircleHole(boolean enabled) {
+        mDrawCircleHole = enabled;
+    }
+
+    public boolean isDrawCircleHoleEnabled() {
+        return mDrawCircleHole;
     }
 }

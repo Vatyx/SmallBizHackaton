@@ -2,15 +2,26 @@
 <resources>
 
     <!--Titles-->
-    <string name="app_name">Easy Time</string>
+    <string name="app_name">EasyTime</string>
 
     <string name="action_settings">Settings</string>
 
-    <!--Login-->
+    <string name="page_title_main">Main</string>
+    <string name="page_title_graph">Logged Hours</string>
+
+    <!--Field Labels-->
     <string name="login_label_username">Username</string>
     <string name="login_label_password">Password</string>
 
+    <string name="game_logged">Logged</string>
+
+    <!--Dialogs-->
+    <string name="dialog_title_edit">Edit</string>
+    <string name="dialog_action_label_dismiss">Cancel</string>
+    <string name="dialog_action_label_submit">Done</string>
+
     <!--Misc-->
     <string name="content_missing_description">Oops!</string>
+    <string name="generic_error_description">There was a problem :(</string>
 
 </resources>

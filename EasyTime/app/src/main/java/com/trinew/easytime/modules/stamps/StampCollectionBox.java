@@ -19,14 +19,27 @@ import java.util.List;
  */
 public class StampCollectionBox {
 
+    private List<ParseStamp> mStamps = new ArrayList<>();
     private List<StampCollection> collectionsList = new ArrayList<>();
 
     private int minHour;
     private int maxHour;
 
     public StampCollectionBox(List<ParseStamp> stamps) {
+        feed(stamps);
+    }
+
+    public void feed(List<ParseStamp> stamps) {
+        mStamps = stamps;
+        sortStamps();
+    }
+
+    // arranges the raw stamp list into sorted list of collections
+    private void sortStamps() {
         // here initialize the collection lists
         Calendar stampCalendar = Calendar.getInstance();
+
+        collectionsList.clear();
 
         int i = 0;
         int j = 0;
@@ -34,14 +47,14 @@ public class StampCollectionBox {
         // time to fill the lists
         minHour = 24;
         maxHour = 0;
-        for (i = 0; i < stamps.size(); i++) {
-            if(stamps.get(i) == null) {
+        for (i = 0; i < mStamps.size(); i++) {
+            if(mStamps.get(i) == null) {
                 Log.e("StampCollectionBox", "Got a null stamp!");
                 continue;
             }
 
-            ParseStamp stamp = stamps.get(i);
-            Date stampDate = stamp.getCreatedAt();
+            ParseStamp stamp = mStamps.get(i);
+            Date stampDate = stamp.getLogDate();
             stampCalendar.setTime(stampDate);
             int stampHour = stampCalendar.get(Calendar.HOUR_OF_DAY);
 
@@ -57,10 +70,11 @@ public class StampCollectionBox {
             StampCollection stampCollection = null;
             Calendar cal1 = Calendar.getInstance();
             Calendar cal2 = Calendar.getInstance();
+            cal2.setTime(stampDate);
+
             for(j = 0; j < collectionsList.size(); j++) {
                 cal1.setTime(collectionsList.get(j).getCollectionDate());
-                cal2.setTime(stampDate);
-                if(cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
+                if((cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)) && (cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR))) {
                     stampCollection = collectionsList.get(j);
                     break;
                 }
@@ -68,16 +82,18 @@ public class StampCollectionBox {
             if(j == collectionsList.size()) {
                 stampCollection = new StampCollection(stampDate);
                 collectionsList.add(stampCollection);
+                Calendar temp = Calendar.getInstance();
+                temp.setTime(stampDate);
+                Log.i("StampCollectionBox", "Added year: " + temp.get(Calendar.YEAR));
             }
 
-            stampCollection.addStamp(stamps.get(i));
-            Log.i("StampCollectionBox", "Added stamp: " + stampCollection.getCollectionDate().toString() + ": " + stamps.get(i).getCreatedAt().toString());
+            stampCollection.addStamp(stamp);
         }
 
         Collections.sort(collectionsList, new Comparator<StampCollection>() {
             @Override
             public int compare(StampCollection t0, StampCollection t1) {
-                return (int)(t0.getCollectionDate().getTime() - t1.getCollectionDate().getTime());
+                return (int) (t1.getCollectionDate().getTime() - t0.getCollectionDate().getTime());
             }
         });
     }
@@ -85,6 +101,14 @@ public class StampCollectionBox {
     // get a list of valid stamp collections
     public List<StampCollection> getStampCollections() {
         return collectionsList;
+    }
+
+    public int getMaxSize() {
+        int max = 0;
+        for(int i = 0; i < collectionsList.size(); i++) {
+            max = Math.max(collectionsList.get(i).size(), max);
+        }
+        return max;
     }
 
     public int getMinHour() {

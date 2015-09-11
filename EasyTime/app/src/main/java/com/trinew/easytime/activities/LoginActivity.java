@@ -13,10 +13,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.parse.LogInCallback;
-import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.trinew.easytime.R;
-import com.trinew.easytime.modules.location.LocationHandler;
 
 /**
  * Created by Jonathan on 8/1/2015.
@@ -95,13 +93,6 @@ public class LoginActivity extends Activity {
     }
 
     private void onLoginUser() {
-        LocationHandler.requestLocation(getApplicationContext(), new LocationHandler.OnLocationReceivedListener() {
-            @Override
-            public void done(ParseGeoPoint geoPoint, Exception e) {
-
-            }
-        });
-
         final Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
 
@@ -109,7 +100,7 @@ public class LoginActivity extends Activity {
     }
 
     private void onCreateAccount() {
-        final Intent intent = new Intent(getApplicationContext(), EmployerTokenVerificationActivity.class);
+        final Intent intent = new Intent(getApplicationContext(), CreateProfileActivity.class);
         startActivity(intent);
     }
 }

@@ -8,8 +8,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:theme="@style/ToolBarStyle.Main" >
 
@@ -18,19 +17,18 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:layout_width="75dp"
-                android:layout_height="36dp"
+                android:layout_width="96dp"
+                android:layout_height="match_parent"
                 android:id="@+id/logo"
                 android:contentDescription="@string/content_missing_description"
                 android:src="@mipmap/drawable_logo_white"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:visibility="gone"
                 android:layout_alignParentStart="false" />
 
             <FrameLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/action_bar_default_height"
                 android:layout_alignParentRight="false"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
@@ -44,7 +42,7 @@
                     android:id="@+id/headerDateText"
                     android:layout_gravity="center"
                     android:textColor="@color/primary_text"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:textSize="24sp" />
 
 
@@ -52,19 +50,17 @@
             </FrameLayout>
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/action_bar_default_height"
+                android:layout_height="@dimen/action_bar_default_height"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp">
+                android:layout_centerVertical="true">
 
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_centerVertical="true"
-                    android:id="@+id/btn_graph"
-                    android:src="@mipmap/ic_action_bargraph" />
+                <ImageButton
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/graphButton"
+                    android:src="@mipmap/ic_action_bargraph"
+                    android:background="@null" />
 
             </RelativeLayout>
 
