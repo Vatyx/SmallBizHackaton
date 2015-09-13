@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:theme="@style/ToolBarStyle.Main" >
+        android:theme="@style/ToolBarStyle.Main">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -68,10 +68,28 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <fragment class="com.trinew.easytime.fragments.GameFragment"
-        android:id="@+id/game"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:id="@+id/fragmentContainer"
+        android:background="@color/background_gray">
+
+        <fragment class="com.trinew.easytime.fragments.GameFragment"
+            android:id="@+id/game"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.trinew.easytime.fragments.GameFragment"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@drawable/toolbar_dropshadow" />
+        </FrameLayout>
+    </RelativeLayout>
 
 </LinearLayout>

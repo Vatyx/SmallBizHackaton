@@ -1,16 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#fff">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/headerContainer"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
         android:layout_marginTop="32dp" >
 
         <TextView
@@ -27,26 +26,29 @@
         android:id="@+id/buttonContainer"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/headerContainer"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="32dp">
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/checkInButton"
             android:layout_centerInParent="true"
-            android:src="@mipmap/drawable_check_in"
-            android:scaleType="centerCrop"
-            android:background="@drawable/check_in_button_selector" />
+            android:background="@drawable/button_check_in"
+            android:text="@string/game_check_in"
+            android:textColor="@drawable/button_text_color"
+            android:textSize="32sp"
+            android:fontFamily="sans-serif-light" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/checkOutButton"
             android:layout_centerInParent="true"
-            android:src="@mipmap/drawable_check_in"
-            android:scaleType="centerCrop"
-            android:background="@drawable/check_out_button_selector"
+            android:background="@drawable/button_check_out"
+            android:text="@string/game_check_out"
+            android:textColor="@drawable/button_text_color"
+            android:textSize="32sp"
+            android:fontFamily="sans-serif-light"
             android:visibility="gone" />
 
     </RelativeLayout>
@@ -56,10 +58,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/durationContainer"
         android:layout_below="@+id/buttonContainer"
-        android:paddingLeft="64dp"
-        android:paddingTop="16dp"
-        android:paddingRight="64dp"
-        android:paddingBottom="16dp">
+        android:layout_marginTop="16dp">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -70,11 +69,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="00"
+                android:text="00"
                 android:id="@+id/timerHoursText"
                 android:textSize="96sp"
                 android:layout_centerVertical="true"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textColor="#9e9e9e" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -85,29 +85,22 @@
                 android:singleLine="true"
                 android:layout_toRightOf="@+id/timerHoursText"
                 android:layout_toEndOf="@+id/timerHoursText"
-                android:layout_centerVertical="true" />
+                android:layout_centerVertical="true"
+                android:textColor="#9e9e9e" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="00"
+                android:text="00"
                 android:id="@+id/timerMinutesText"
                 android:textSize="96sp"
-                android:gravity="center_horizontal"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/timerColonText"
                 android:layout_toEndOf="@+id/timerColonText"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textColor="#9e9e9e" />
         </RelativeLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/game_logged"
-            android:id="@+id/durationLabelText"
-            android:textSize="18sp"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/timeContainer" />
     </RelativeLayout>
 
     <View
@@ -116,40 +109,43 @@
         android:background="#eee"
         android:layout_below="@+id/durationContainer"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp" />
+        android:layout_marginRight="16dp"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:id="@+id/checkContainer"
+        android:id="@+id/feedContainer"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="24dp"
         android:layout_marginTop="16dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp">
+        android:background="@drawable/rectangle_rounded"
+        android:backgroundTint="#eee"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
 
         <ViewAnimator
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/checkAnimator" >
+            android:id="@+id/feedAnimator" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                tools:text="YoHomies"
-                android:id="@+id/checkText1"
-                android:textSize="14sp" />
+                tools:text="Last checked in at 9:30 AM"
+                android:id="@+id/feedText1"
+                android:textSize="14sp"
+                android:textColor="#424242" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                tools:text="YoHomies"
-                android:id="@+id/checkText2"
-                android:textSize="14sp" />
+                tools:text="Last checked out at 12:10 PM"
+                android:id="@+id/feedText2"
+                android:textSize="14sp"
+                android:textColor="#424242" />
         </ViewAnimator>
     </RelativeLayout>
 

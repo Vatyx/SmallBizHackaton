@@ -51,9 +51,9 @@ public class GameFragment extends Fragment {
     private TextView timerColonText;
     private TextView timerMinutesText;
 
-    private ViewAnimator checkAnimator;
-    private TextView checkText1;
-    private TextView checkText2;
+    private ViewAnimator feedAnimator;
+    private TextView feedText1;
+    private TextView feedText2;
 
     private RelativeLayout errorContainer;
     private RelativeLayout progressContainer;
@@ -105,12 +105,12 @@ public class GameFragment extends Fragment {
         timerColonText = (TextView) view.findViewById(R.id.timerColonText);
         timerMinutesText = (TextView) view.findViewById(R.id.timerMinutesText);
 
-        checkAnimator = (ViewAnimator) view.findViewById(R.id.checkAnimator);
-        checkAnimator.setInAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_in_left));
-        checkAnimator.setOutAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_out_right));
+        feedAnimator = (ViewAnimator) view.findViewById(R.id.feedAnimator);
+        feedAnimator.setInAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.anim_slide_in_top));
+        feedAnimator.setOutAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.anim_slide_out_top));
 
-        checkText1 = (TextView) view.findViewById(R.id.checkText1);
-        checkText2 = (TextView) view.findViewById(R.id.checkText2);
+        feedText1 = (TextView) view.findViewById(R.id.feedText1);
+        feedText2 = (TextView) view.findViewById(R.id.feedText2);
 
         errorContainer = (RelativeLayout) view.findViewById(R.id.errorContainer);
         progressContainer = (RelativeLayout) view.findViewById(R.id.progressContainer);
@@ -154,9 +154,10 @@ public class GameFragment extends Fragment {
             public void done(List<ParseStamp> list, ParseException e) {
                 progressContainer.setVisibility(View.GONE);
 
-                if (e != null || list == null) {
+                if (e != null) {
                     errorContainer.setVisibility(View.VISIBLE);
                     genericErrorText.setVisibility(View.VISIBLE);
+                    Log.e("GameFragment", "Problem fetching stamps: " + e.toString());
 
                     return;
                 }
@@ -186,14 +187,14 @@ public class GameFragment extends Fragment {
                         anim.setRepeatCount(Animation.INFINITE);
                         timerColonText.startAnimation(anim);
 
-                        checkText1.setText("Last checked in at " + PrettyTime.getPrettyTime(lastStamp.getLogDate()));
+                        feedText1.setText("Last checked in at " + PrettyTime.getPrettyTime(lastStamp.getLogDate()));
 
                         if (!easyTimer.isRunning()) {
                             easyTimer.startTimer();
                         }
                         break;
                     case ParseStamp.FLAG_CHECK_OUT:
-                        checkText1.setText("Last checked out at " + PrettyTime.getPrettyTime(lastStamp.getLogDate()));
+                        feedText1.setText("Last checked out at " + PrettyTime.getPrettyTime(lastStamp.getLogDate()));
                         changeState(ParseStamp.FLAG_CHECK_IN);
                         break;
                 }
@@ -236,15 +237,49 @@ public class GameFragment extends Fragment {
           //  easyTimer.resumeTimer();
     }
 
+    // pushes a new feed entry onto the check view
+    private void pushFeedEntry(ParseStamp stamp) {
+        checkIndex = (checkIndex + 1) % 2;
+
+        Date stampDate = stamp.getLogDate();
+        int stampFlag = stamp.getFlag();
+
+        String flagStr = "";
+        switch(stampFlag) {
+            case ParseStamp.FLAG_CHECK_IN:
+                flagStr = "in";
+                break;
+            case ParseStamp.FLAG_CHECK_OUT:
+                flagStr = "out";
+                break;
+        }
+
+        String stampStr = "Last checked " + flagStr + " at " + PrettyTime.getPrettyTime(stampDate);
+
+        switch(checkIndex) {
+            case 0:
+                feedText1.setText(stampStr);
+                break;
+            case 1:
+                feedText2.setText(stampStr);
+                break;
+        }
+
+        feedAnimator.showNext();
+    }
+
+    // updates the duration textviews with the given time duration
     private void syncDurationDisplay(long totalTime) {
         long hours = TimeUnit.MILLISECONDS.toHours(totalTime);
         long minutes = TimeUnit.MILLISECONDS.toMinutes(totalTime) - TimeUnit.HOURS.toMinutes(hours);
-        Log.i("GameFragment", "Minutes: " + minutes);
         NumberFormat f = new DecimalFormat("00");
-        timerHoursText.setText(f.format(hours));
-        timerMinutesText.setText(f.format(minutes));
+        String hoursStr = f.format(hours);
+        String minutesStr = f.format(minutes);
+        timerHoursText.setText(hoursStr);
+        timerMinutesText.setText(minutesStr);
     }
 
+    // changes the state of the page
     private void changeState(int newState) {
         checkState = newState;
 
@@ -269,39 +304,6 @@ public class GameFragment extends Fragment {
         }
 
         timerColonText.clearAnimation();
-
-        // begin animations
-        final Animation a = new RotateAnimation(0.0f, 360.0f,
-                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-                0.5f);
-        a.setRepeatCount(-1);
-        a.setDuration(1000);
-        a.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-                if (checkState == ParseStamp.FLAG_CHECK_OUT) {
-                    checkOutButton.clearAnimation();
-                    checkOutButton.setEnabled(true);
-
-                    checkOutButton.setVisibility(View.GONE);
-                    checkInButton.setVisibility(View.VISIBLE);
-
-                    Toast.makeText(getActivity(), "Thanks for checking out!", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        checkOutButton.startAnimation(a);
 
         final ParseUser user = ParseUser.getCurrentUser();
 
@@ -378,12 +380,9 @@ public class GameFragment extends Fragment {
                 }
             });*/
         }
-    }
 
-    private void checkIn() {
-        checkInButton.setEnabled(false);
-
-        final Animation a = new RotateAnimation(0.0f, 360.0f,
+        // begin animations
+        final Animation a = new RotateAnimation(0f, 360f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
                 0.5f);
         a.setRepeatCount(-1);
@@ -401,30 +400,24 @@ public class GameFragment extends Fragment {
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-                if (checkState == ParseStamp.FLAG_CHECK_IN) {
-                    if (!easyTimer.isRunning()) {
-                        easyTimer.startTimer();
-                    }
+                if (checkState == ParseStamp.FLAG_CHECK_OUT) {
+                    Log.i("GameFragment", "Checked out!");
+                    pushFeedEntry(stamp);
 
-                    Animation anim = new AlphaAnimation(0.0f, 1.0f);
-                    anim.setDuration(500); //You can manage the blinking time with this parameter
-                    anim.setStartOffset(20);
-                    anim.setRepeatMode(Animation.REVERSE);
-                    anim.setRepeatCount(Animation.INFINITE);
-                    timerColonText.startAnimation(anim);
+                    checkOutButton.clearAnimation();
+                    checkOutButton.setEnabled(true);
 
-                    checkInButton.clearAnimation();
-                    checkInButton.setVisibility(View.GONE);
-                    checkInButton.setEnabled(true);
-
-                    checkOutButton.setVisibility(View.VISIBLE);
-
-                    Toast.makeText(getActivity(), "Nice! You checked in!", Toast.LENGTH_LONG).show();
+                    checkOutButton.setVisibility(View.GONE);
+                    checkInButton.setVisibility(View.VISIBLE);
                 }
             }
         });
 
-        checkInButton.startAnimation(a);
+        checkOutButton.startAnimation(a);
+    }
+
+    private void checkIn() {
+        checkInButton.setEnabled(false);
 
         final ParseUser user = ParseUser.getCurrentUser();
 
@@ -498,6 +491,52 @@ public class GameFragment extends Fragment {
                 }
             });*/
         }
+
+        final Animation a = new RotateAnimation(0.0f, 360.0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+                0.5f);
+        a.setRepeatCount(-1);
+        a.setDuration(1000);
+        a.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                if (checkState == ParseStamp.FLAG_CHECK_IN) {
+                    if (!easyTimer.isRunning()) {
+                        easyTimer.startTimer();
+                    }
+
+                    Log.i("GameFragment", "Checked in!");
+
+                    // TODO: The start time of the timer may not be the same as the log date of the flag
+                    pushFeedEntry(stamp);
+
+                    Animation anim = new AlphaAnimation(0.0f, 1.0f);
+                    anim.setDuration(500); //You can manage the blinking time with this parameter
+                    anim.setStartOffset(20);
+                    anim.setRepeatMode(Animation.REVERSE);
+                    anim.setRepeatCount(Animation.INFINITE);
+                    timerColonText.startAnimation(anim);
+
+                    checkInButton.clearAnimation();
+                    checkInButton.setVisibility(View.GONE);
+                    checkInButton.setEnabled(true);
+
+                    checkOutButton.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        checkInButton.startAnimation(a);
     }
 
     private interface StampListener {

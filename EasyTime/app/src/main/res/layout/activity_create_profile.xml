@@ -161,7 +161,7 @@
             android:layout_height="36dp"
             android:layout_centerHorizontal="true"
             android:text="Submit"
-            android:background="@mipmap/drawable_login"
+            android:background="@drawable/button_primary"
             android:textSize="16sp"
             android:textColor="#fff" />
 

@@ -12,16 +12,15 @@ import com.trinew.easytime.models.ParseStamp;
  */
 public class MainApplication extends Application {
 
-    private final static String parseAppId = "6UQPoyjqD9UoLsUsJMkgdZjEPiFkTWHMzkwL0o4n";
-    private final static String parseClientKey = "Jm49erGyE229JxFgjW2ZGa8ETynkpl5hbKwORTqO";
+    private final static String parseAppId = "0zOguLdTdU3vgFMmtaJQNLyk1kUm18NowKwp3ECN";
+    private final static String parseClientKey = "4coRGqECUCUTlNGYxlPtZsYIVwkVfJBthZ6awr2p";
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-
         // Enable Local Datastore.
-        //Parse.enableLocalDatastore(this);
+        Parse.enableLocalDatastore(this);
 
         // Parse
         ParseObject.registerSubclass(ParseStamp.class);

@@ -49,7 +49,7 @@ public class MainActivity extends ActionBarActivity implements GameFragment.OnGa
                 Intent intent = new Intent(MainActivity.this, GraphActivity.class);
                 startActivity(intent);
 
-                overridePendingTransition(R.anim.move_right_in_activity, R.anim.move_left_out_activity);
+                overridePendingTransition(R.anim.anim_move_right_in, R.anim.anim_move_left_out);
             }
         });
     }

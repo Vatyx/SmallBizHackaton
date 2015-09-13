@@ -9,11 +9,12 @@
     <string name="page_title_main">Main</string>
     <string name="page_title_graph">Logged Hours</string>
 
-    <!--Field Labels-->
+    <!--Labels-->
     <string name="login_label_username">Username</string>
     <string name="login_label_password">Password</string>
 
-    <string name="game_logged">Logged</string>
+    <string name="game_check_in">Check In</string>
+    <string name="game_check_out">Check Out</string>
 
     <!--Dialogs-->
     <string name="dialog_title_edit">Edit</string>

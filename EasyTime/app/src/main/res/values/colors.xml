@@ -6,6 +6,8 @@
     <color name="red_light">#ffff4444</color>
     <color name="green_light">#ff99cc00</color>
 
+    <color name="background_gray">#e0e0e0</color>
+
     <!--Primitive-->
     <color name="white">#fff</color>
     <color name="off_white">#fffafafa</color>
@@ -15,8 +17,11 @@
     <color name="very_light_gray">#ddd</color>
 
     <!--General-->
-    <color name="window_background">#fff</color>
     <color name="primary">#00acc7</color>
+    <color name="primary_ink">#83bfc9</color>
+
+    <color name="secondary">#2a4478</color>
+    <color name="secondary_ink">#4d5d78</color>
 
     <!--Text-->
     <color name="primary_text">#fff</color>

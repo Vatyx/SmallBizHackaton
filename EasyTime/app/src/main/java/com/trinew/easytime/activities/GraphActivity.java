@@ -69,7 +69,7 @@ public class GraphActivity extends ActionBarActivity implements EasyBoxFragment.
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.move_left_in_activity, R.anim.move_right_out_activity);
+        overridePendingTransition(R.anim.anim_move_left_in, R.anim.anim_move_right_out);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class GraphActivity extends ActionBarActivity implements EasyBoxFragment.
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
-                overridePendingTransition(R.anim.move_left_in_activity, R.anim.move_right_out_activity);
+                overridePendingTransition(R.anim.anim_move_left_in, R.anim.anim_move_right_out);
                 return true;
         }
         return super.onOptionsItemSelected(item);

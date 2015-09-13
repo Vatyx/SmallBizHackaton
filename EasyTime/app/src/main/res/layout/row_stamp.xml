@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"
-    android:minHeight="32dp" >
+    android:minHeight="32dp"
+    android:background="#fff">
 
     <ImageView
         android:layout_width="match_parent"
