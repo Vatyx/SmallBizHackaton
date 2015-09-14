@@ -15,7 +15,7 @@ public class SplashActivity extends Activity {
 
     private final static int SPLASH_MSG_DECAY = 1;
 
-    private final static long SPLASH_DECAY_SPAN = 1500;
+    private final static long SPLASH_DECAY_SPAN = 0;
 
     private ImageView splashImage;
 

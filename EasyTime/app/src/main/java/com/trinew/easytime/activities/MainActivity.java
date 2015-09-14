@@ -33,7 +33,7 @@ public class MainActivity extends ActionBarActivity implements GameFragment.OnGa
 
         // Set up toolbar_
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.mipmap.drawable_logo_white);
+        toolbar.setNavigationIcon(R.drawable.drawable_logo_white);
 
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -49,7 +49,7 @@ public class MainActivity extends ActionBarActivity implements GameFragment.OnGa
                 Intent intent = new Intent(MainActivity.this, GraphActivity.class);
                 startActivity(intent);
 
-                overridePendingTransition(R.anim.anim_move_right_in, R.anim.anim_move_left_out);
+                overridePendingTransition(R.anim.anim_move_in_right, R.anim.anim_move_out_left);
             }
         });
     }

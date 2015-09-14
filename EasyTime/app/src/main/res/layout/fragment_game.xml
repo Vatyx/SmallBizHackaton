@@ -74,7 +74,8 @@
                 android:textSize="96sp"
                 android:layout_centerVertical="true"
                 android:singleLine="true"
-                android:textColor="#757575" />
+                android:textColor="#757575"
+                android:fontFamily="sans-serif-light" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -86,7 +87,8 @@
                 android:layout_toRightOf="@+id/timerHoursText"
                 android:layout_toEndOf="@+id/timerHoursText"
                 android:layout_centerVertical="true"
-                android:textColor="#757575" />
+                android:textColor="#757575"
+                android:fontFamily="sans-serif-light" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -98,7 +100,8 @@
                 android:layout_toRightOf="@+id/timerColonText"
                 android:layout_toEndOf="@+id/timerColonText"
                 android:singleLine="true"
-                android:textColor="#757575" />
+                android:textColor="#757575"
+                android:fontFamily="sans-serif-light" />
         </RelativeLayout>
 
     </RelativeLayout>

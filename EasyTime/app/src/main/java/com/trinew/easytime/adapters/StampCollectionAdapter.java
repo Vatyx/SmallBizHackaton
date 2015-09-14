@@ -107,14 +107,15 @@ public class StampCollectionAdapter extends AnimatedExpandableListView.AnimatedE
         switch (flag) {
             case ParseStamp.FLAG_CHECK_IN:
                 holder.thumbText.setText("IN");
-                color = mContext.getResources().getColor(R.color.green_light);
+                color = mContext.getResources().getColor(R.color.primary);
                 break;
             case ParseStamp.FLAG_CHECK_OUT:
                 holder.thumbText.setText("OUT");
-                color = mContext.getResources().getColor(R.color.red_light);
+                color = mContext.getResources().getColor(R.color.secondary);
                 break;
         }
 
+        //holder.timeText.setTextColor(color);
         holder.thumbImage.setColorFilter(color);
 
         String commentStr = stamp.getComment();
@@ -135,11 +136,18 @@ public class StampCollectionAdapter extends AnimatedExpandableListView.AnimatedE
         if (convertView == null) {
             holder = new StampCollectionGroupHolder();
             convertView = inflater.inflate(R.layout.row_stamp_collection, parent, false);
+            holder.indicatorImage = (ImageView) convertView.findViewById(R.id.indicatorImage);
             holder.dateText = (TextView) convertView.findViewById(R.id.dateText);
             holder.durationText = (TextView) convertView.findViewById(R.id.durationText);
             convertView.setTag(holder);
         } else {
             holder = (StampCollectionGroupHolder) convertView.getTag();
+        }
+
+        if (isExpanded) {
+            holder.indicatorImage.setImageResource(R.drawable.ic_expand_less);
+        } else {
+            holder.indicatorImage.setImageResource(R.drawable.ic_expand_more);
         }
 
         StampCollection stampCollection = (StampCollection) getGroup(groupPosition);

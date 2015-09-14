@@ -220,21 +220,12 @@ public class GameFragment extends Fragment {
 
     @Override
     public void onPause() {
-        Log.i("MainActivity", easyTimer.isRunning() + " | " + easyTimer.isPaused());
-
-        /*
-        if(easyTimer.isRunning() && !easyTimer.isPaused())
-            easyTimer.pauseTimer();
-           */
         super.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        //if(easyTimer.isRunning() && easyTimer.isPaused())
-          //  easyTimer.resumeTimer();
     }
 
     // pushes a new feed entry onto the check view
@@ -314,7 +305,7 @@ public class GameFragment extends Fragment {
         final ParseStamp stamp = new ParseStamp();
         stamp.setLogDate(new Date());
         stamp.setFlag(ParseStamp.FLAG_CHECK_OUT);
-        stamp.setComment("Checked out!");
+        stamp.setComment("Checked out");
 
         // now we need a location for the stamp
         // first try to get a quick fix location, if that doesn't work
@@ -322,11 +313,12 @@ public class GameFragment extends Fragment {
         ParseGeoPoint quickLocation = LocationHandler.getQuickLocation(getActivity().getApplicationContext());
         if(quickLocation != null) {
             stamp.setLocation(quickLocation);
+            stamp.saveEventually();
 
             parseStamps.add(stamp);
             user.put("stamps", parseStamps);
 
-            user.saveInBackground(new SaveCallback() {
+            user.saveEventually(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e != null) {
@@ -338,11 +330,12 @@ public class GameFragment extends Fragment {
                 }
             });
         } else {
+            stamp.saveEventually();
 
             parseStamps.add(stamp);
             user.put("stamps", parseStamps);
 
-            user.saveInBackground(new SaveCallback() {
+            user.saveEventually(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e != null) {
@@ -401,7 +394,6 @@ public class GameFragment extends Fragment {
             @Override
             public void onAnimationRepeat(Animation animation) {
                 if (checkState == ParseStamp.FLAG_CHECK_OUT) {
-                    Log.i("GameFragment", "Checked out!");
                     pushFeedEntry(stamp);
 
                     checkOutButton.clearAnimation();
@@ -426,16 +418,17 @@ public class GameFragment extends Fragment {
         final ParseStamp stamp = new ParseStamp();
         stamp.setLogDate(new Date());
         stamp.setFlag(ParseStamp.FLAG_CHECK_IN);
-        stamp.setComment("Checked in!");
+        stamp.setComment("Checked in");
 
         ParseGeoPoint quickLocation = LocationHandler.getQuickLocation(getActivity().getApplicationContext());
         if(quickLocation != null) {
             stamp.setLocation(quickLocation);
+            stamp.saveEventually();
 
             parseStamps.add(stamp);
             user.put("stamps", parseStamps);
 
-            user.saveInBackground(new SaveCallback() {
+            user.saveEventually(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e != null) {
@@ -447,11 +440,12 @@ public class GameFragment extends Fragment {
                 }
             });
         } else {
+            stamp.saveEventually();
 
             parseStamps.add(stamp);
             user.put("stamps", parseStamps);
 
-            user.saveInBackground(new SaveCallback() {
+            user.saveEventually(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e != null) {
@@ -514,8 +508,6 @@ public class GameFragment extends Fragment {
                     if (!easyTimer.isRunning()) {
                         easyTimer.startTimer();
                     }
-
-                    Log.i("GameFragment", "Checked in!");
 
                     // TODO: The start time of the timer may not be the same as the log date of the flag
                     pushFeedEntry(stamp);

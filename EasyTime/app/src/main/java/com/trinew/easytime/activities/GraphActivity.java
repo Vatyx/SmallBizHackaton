@@ -35,7 +35,7 @@ public class GraphActivity extends ActionBarActivity implements EasyBoxFragment.
 
         // Set up toolbar_
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.mipmap.ic_action_arrow_left);
+        toolbar.setNavigationIcon(R.drawable.ic_action_arrow_left);
 
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -69,7 +69,7 @@ public class GraphActivity extends ActionBarActivity implements EasyBoxFragment.
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.anim_move_left_in, R.anim.anim_move_right_out);
+        overridePendingTransition(R.anim.anim_move_in_left, R.anim.anim_move_out_right);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class GraphActivity extends ActionBarActivity implements EasyBoxFragment.
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
-                overridePendingTransition(R.anim.anim_move_left_in, R.anim.anim_move_right_out);
+                overridePendingTransition(R.anim.anim_move_in_left, R.anim.anim_move_out_right);
                 return true;
         }
         return super.onOptionsItemSelected(item);

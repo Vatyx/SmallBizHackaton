@@ -8,6 +8,7 @@
     <com.trinew.easytime.views.AnimatedExpandableListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:groupIndicator="@null"
         android:id="@+id/stampBox" />
 
     <RelativeLayout

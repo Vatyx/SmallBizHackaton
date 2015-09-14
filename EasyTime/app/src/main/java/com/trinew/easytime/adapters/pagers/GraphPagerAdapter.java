@@ -74,7 +74,7 @@ public class GraphPagerAdapter extends FragmentPagerAdapter implements PagerSlid
 
         switch(position) {
             case PAGE_EASY_BOX:
-                tabIconImage.setImageResource(R.mipmap.ic_action_box);
+                tabIconImage.setImageResource(R.drawable.ic_action_box);
                 break;
         }
 

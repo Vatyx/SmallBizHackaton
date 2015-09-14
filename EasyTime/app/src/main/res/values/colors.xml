@@ -2,9 +2,6 @@
 <resources>
     <color name="theme_black">#393939</color>
     <color name="theme_dark">#443434</color>
-    
-    <color name="red_light">#ffff4444</color>
-    <color name="green_light">#ff99cc00</color>
 
     <color name="background_gray">#e0e0e0</color>
 

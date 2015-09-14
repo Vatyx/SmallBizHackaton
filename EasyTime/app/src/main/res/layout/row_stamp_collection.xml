@@ -5,16 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"
-    android:minHeight="84dp"
-    android:padding="4dp"
-    android:background="#fff">
+    android:minHeight="72dp"
+    android:background="@drawable/row">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/listener_image"
         android:focusable="false"
-        android:contentDescription="@string/content_missing_description"/>
+        android:contentDescription="@string/content_missing_description" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -27,22 +26,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/dateText"
-            android:textSize="16sp"
-            android:textColor="#333"
+            android:textSize="18sp"
+            android:textColor="#616161"
             tools:text="8/31"
             android:textStyle="bold"
             android:singleLine="true"
             android:focusable="false"
-            android:focusableInTouchMode="false" />
+            android:focusableInTouchMode="false"
+            android:textIsSelectable="false" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/durationText"
-            android:textSize="14sp"
-            android:textColor="#666"
+            android:textSize="14dp"
+            android:textColor="#424242"
             tools:text="7h"
-            android:textStyle="normal"
+            android:textStyle="bold"
             android:singleLine="true"
             android:focusable="false"
             android:focusableInTouchMode="false"
@@ -74,5 +74,22 @@
             android:textStyle="bold"
             android:layout_centerVertical="true" />
     </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:id="@+id/indicatorFrame"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/indicatorImage"
+            android:tint="#616161"
+            android:src="@drawable/ic_expand_more" />
+    </FrameLayout>
 
 </RelativeLayout>

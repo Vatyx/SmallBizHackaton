@@ -58,8 +58,6 @@ public class StampCollectionBox {
             stampCalendar.setTime(stampDate);
             int stampHour = stampCalendar.get(Calendar.HOUR_OF_DAY);
 
-            //Log.i("StampCollectionBox", "Stamp = " + stampDay + " : " + stampHour);
-
             if(stampHour < minHour)
                 minHour = stampHour;
 
@@ -84,7 +82,6 @@ public class StampCollectionBox {
                 collectionsList.add(stampCollection);
                 Calendar temp = Calendar.getInstance();
                 temp.setTime(stampDate);
-                Log.i("StampCollectionBox", "Added year: " + temp.get(Calendar.YEAR));
             }
 
             stampCollection.addStamp(stamp);

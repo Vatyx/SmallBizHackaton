@@ -21,7 +21,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/logo"
                 android:contentDescription="@string/content_missing_description"
-                android:src="@mipmap/drawable_logo_white"
+                android:src="@drawable/drawable_logo_white"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="false" />
@@ -59,8 +59,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/graphButton"
-                    android:src="@mipmap/ic_action_bargraph"
-                    android:background="@null" />
+                    android:src="@drawable/ic_action_bargraph"
+                    android:background="@drawable/button_bar" />
 
             </RelativeLayout>
 
@@ -87,7 +87,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="4dp"
+                android:layout_height="2dp"
                 android:background="@drawable/toolbar_dropshadow" />
         </FrameLayout>
     </RelativeLayout>
